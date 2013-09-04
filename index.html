@@ -18,6 +18,8 @@
 
  .button { padding:15px; background-color:grey; border:1px solid black; }
 
+ .potential tr:nth-child(n + 15) { display:none; }
+
   table { margin:20px 0; border:1px solid #333; }
   td, th { padding:5px; border-right:1px solid #333; border-bottom:1px solid #333; }
   td:last-child, th:last-child { border-right-width:0; }
@@ -42,6 +44,10 @@
 
 <div id="picks"></div>
 
+<h3>Player search</h3>
+<div id="playerSearch" class="button">Rerun (found <span class="found">0</span>)</div>
+<div id="found"></div>
+
 </div>
 
 <div class="right pane">
@@ -53,12 +59,6 @@
 <h3>Drafted</h3>
 
 <div id="drafted"></div>
-
-<h3>Player search</h3>
-
-<div id="playerSearch" class="button">Rerun (found <span class="found">0</span>)</div>
-
-<div id="found"></div>
 
 </div>
 

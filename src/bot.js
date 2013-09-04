@@ -38,7 +38,37 @@ ff = function(document, window, undefined) {
     , drawPotentials = function() {
         var potentials = []
         ;
+        $.each(PLAYER_RANKINGS, function(i, p) {
+            var json = {
+                'rank':p[0],
+                'first_name':p[1],
+                'last_name':p[2],
+                'team':p[3],
+                'fantasy_position':p[4],
+                'pos_rank':p[5],
+                'id':p[6]
+            };
+            addApiLink( json );
+            potentials.push(json);
+        });
         render("potentials", {'players':potentials}, "#players");
+        setTimeout(updatePotentials, 300);
+    }
+
+    , updatePotentials = function() {
+        $(".potential tr").not(".head").filter(":visible").each(function(i, ele) {
+            var id = $(ele).data("id")
+            url = ["player", id, "status"].join("/")
+            ;
+            call(url, function(data) {
+                if ( data && data.fantasy_team ) {
+                    $(ele).remove();
+                }
+                else {
+                    $(ele).addClass("free");
+                }
+            });
+        });
     }
 
     , updatePicks = function() {
@@ -109,17 +139,22 @@ ff = function(document, window, undefined) {
     }
 
     , refresh = function() {
-        drawPotentials();
         getTeam();
         updatePicks();
+        updatePotentials();
     }
     ;
 
     return {
         init: function() {
+            drawPotentials();
             refresh();
             setTimeout(refresh, 4000);
             $("#playerSearch").on("click", playerSearch);
+        }
+
+        , updatePicked: function() {
+            updatePotentials();
         }
     };
 }(document, window, undefined);
