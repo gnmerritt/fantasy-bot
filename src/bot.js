@@ -16,16 +16,25 @@ ff = function(document, window, undefined) {
         return url + "?key=" + KEY;
     }
 
-    , call = function( method, callback ) {
+    , call = function( method, callback, type ) {
         var url = withKey( urlPrefix + method )
+        , verb = type || "GET"
         ;
         $.ajax({
-            type: "GET",
+            type: verb,
             url: url,
             crossDomain: true,
             contentType: "application/json; charset=utf-8",
             dataType: "jsonp",
             success: callback
+        });
+    }
+
+    , pick = function( playerid ) {
+        var pickUrl = ["pick_player", playerid].join("/")
+        ;
+        call(pickUrl, function(data) {
+            debugger;
         });
     }
 
@@ -79,7 +88,21 @@ ff = function(document, window, undefined) {
             , mine = data.picks.filter(myTeam)
             ;
             render("pickList", {'mine':mine}, "#picks");
+            setTimeout(pickIfActive, 200);
         });
+    }
+
+    , pickIfActive = function() {
+        var topId = getTopPlayerId();
+        if ( $('#picks .active').length ) {
+            pick(topId);
+        }
+    }
+
+    , getTopPlayerId = function() {
+        var ele = $("#players .free")[0]
+        , id = $(ele).data("id");
+        return id;
     }
 
     , getTeam = function() {
@@ -138,6 +161,15 @@ ff = function(document, window, undefined) {
         player.url = withKey( urlPrefix + "player/" + player.id + "/status" );
     }
 
+    , drawRoster = function() {
+        var roster_list = []
+        ;
+        $.each(ROSTER, function(i, s) {
+            roster_list.push({'name':s});
+        });
+        render("roster", {'slots':roster_list}, "#roster");
+    }
+
     , refresh = function() {
         getTeam();
         updatePicks();
@@ -147,6 +179,7 @@ ff = function(document, window, undefined) {
 
     return {
         init: function() {
+            drawRoster();
             drawPotentials();
             refresh();
             setTimeout(refresh, 4000);
