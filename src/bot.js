@@ -12,11 +12,15 @@ ff = function(document, window, undefined) {
     , teamId
 
     , withKey = function( url ) {
-        return url + "?key=" + KEY + "&callback=cb";
+        return url + "?key=" + KEY;
+    }
+
+    , jsonP = function( url ) {
+        return url + "&callback=cb";
     }
 
     , call = function( method, callback ) {
-        var url = withKey( urlPrefix + method )
+        var url = jsonP( withKey( urlPrefix + method ) )
         ;
         $.ajax({
             type: "GET",
@@ -34,7 +38,13 @@ ff = function(document, window, undefined) {
         });
     }
 
-    , _updatePicks = function() {
+    , drawPotentials = function() {
+        var potentials = []
+        ;
+        render("potentials", {'players':potentials}, "#players");
+    }
+
+    , updatePicks = function() {
         call("picks", function(data) {
             var myTeam = function(ele) {
                 return ele.team.id == teamId;
@@ -45,19 +55,32 @@ ff = function(document, window, undefined) {
         });
     }
 
-    , _getTeam = function() {
+    , getTeam = function() {
         call("team", function(data) {
-            render("team", data, "#team");
             teamId = data.id;
+            render("team", data, "#team");
+            addApiLinkToPlayers(data.players);
+            render("drafted", {'players':data.players}, "#drafted");
         });
+    }
+
+    , addApiLinkToPlayers = function( players ) {
+        $.each(players, function(i, ele) {
+            ele.url = withKey( urlPrefix + "player/" + ele.id + "/status" );
+        });
+    }
+
+    , refresh = function() {
+        drawPotentials();
+        getTeam();
+        updatePicks();
     }
     ;
 
     return {
         init: function() {
-            _getTeam();
-            _updatePicks();
+            refresh();
+            setTimeout(refresh, 4000);
         }
-
     };
 }(document, window, undefined);
