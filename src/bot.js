@@ -10,17 +10,14 @@ ff = function(document, window, undefined) {
         , HOST: HOST
     })
     , teamId
+    , foundPlayers
 
     , withKey = function( url ) {
         return url + "?key=" + KEY;
     }
 
-    , jsonP = function( url ) {
-        return url + "&callback=cb";
-    }
-
     , call = function( method, callback ) {
-        var url = jsonP( withKey( urlPrefix + method ) )
+        var url = withKey( urlPrefix + method )
         ;
         $.ajax({
             type: "GET",
@@ -64,6 +61,43 @@ ff = function(document, window, undefined) {
         });
     }
 
+    , playerSearch = function() {
+        foundPlayers = 0;
+        $("#found").html('');
+        $.each(PLAYER_RANKINGS, function(i, player) {
+            search(player);
+        });
+    }
+
+    , search = function( player_list ) {
+        var first_name = player_list[1].toLowerCase()
+        , last_name = player_list[2]
+        , position = player_list[4]
+        , searchUrl = ["search",
+                       "name", last_name,
+                       "pos", position].join("/")
+        , gotId = function(match) {
+            player_list.push(match.id);
+            $("#found").append('<div>' + player_list + '</div>');
+            $(".found").html(++foundPlayers);
+        }
+        ;
+        call(searchUrl, function(data) {
+            // Only got one match back, trust it
+            if ( data.results && data.results.length == 1 ) {
+                gotId(data.results[0]);
+            }
+            else if ( data.results ) { // Look a little harder
+                $.each(data.results, function(i, result) {
+                    var resultName = result.first_name.toLowerCase();
+                    if ( resultName.indexOf(first_name) > -1 ) {
+                        gotId(result);
+                    }
+                });
+            }
+        });
+    }
+
     , addApiLinkToPlayers = function( players ) {
         $.each(players, function(i, ele) {
             addApiLink( ele );
@@ -85,6 +119,7 @@ ff = function(document, window, undefined) {
         init: function() {
             refresh();
             setTimeout(refresh, 4000);
+            $("#playerSearch").on("click", playerSearch);
         }
     };
 }(document, window, undefined);
