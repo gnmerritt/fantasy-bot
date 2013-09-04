@@ -142,6 +142,9 @@ ff = function(document, window, undefined) {
                        "name", last_name,
                        "pos", position].join("/")
         , gotId = function(match) {
+            if ( player_list.length == 7) {
+                player_list.pop(); // remove the old id
+            }
             player_list.push(match.id);
             $("#found").append('<div>' + player_list + '</div>');
             $(".found").html(++foundPlayers);
