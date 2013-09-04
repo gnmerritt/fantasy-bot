@@ -2,13 +2,38 @@
 <html>
 <head>
 <title>Nathan's FF Draft Bot</title>
-<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" /> -->
-<script src="./jquery-1.9.1.min.js"></script>
-<script src="./src/bot.js"></script>
-<script src="./src/ui.js"></script>
-<script src="./data.js"></script>
+<script src="jquery-2.0.3.min.js"></script>
+<script src="dust-full-0.3.0.min.js"></script>
+<script src="data.js"></script>
+<script src="config.js"></script>
+<script src="src/bot.js"></script>
+<script src="src/ui.js"></script>
+<style type="text/css">
+</style>
 </head>
 <body>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    ff.init();
+  });
+</script>
+
+<div class="left pane">
+
+<h3>My Team</h3>
+
+<div id="team"></div>
+
+<h3>My Picks</h3>
+
+<div id="picks"></div>
+
+</div>
+
+<div class="right pane">
+
+</div>
 
 </body>
 </html>
