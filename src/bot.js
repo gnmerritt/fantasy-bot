@@ -66,8 +66,12 @@ ff = function(document, window, undefined) {
 
     , addApiLinkToPlayers = function( players ) {
         $.each(players, function(i, ele) {
-            ele.url = withKey( urlPrefix + "player/" + ele.id + "/status" );
+            addApiLink( ele );
         });
+    }
+
+    , addApiLink = function( player ) {
+        player.url = withKey( urlPrefix + "player/" + player.id + "/status" );
     }
 
     , refresh = function() {
