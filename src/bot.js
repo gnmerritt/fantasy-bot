@@ -34,7 +34,7 @@ ff = function(document, window, undefined) {
         var pickUrl = ["pick_player", playerid].join("/")
         ;
         call(pickUrl, function(data) {
-            debugger;
+            console.log("drafted player, got msg back: "+ data.message);
         });
     }
 
@@ -93,14 +93,26 @@ ff = function(document, window, undefined) {
     }
 
     , pickIfActive = function() {
-        var topId = getTopPlayerId();
-        if ( $('#picks .active').length ) {
-            pick(topId);
+        var  picks = $('#picks')
+        , active = picks.find('.active')
+        , my_pick_index = 0
+        , position
+        ;
+        if ( active.length ) {
+            picks.find("li").each(function(i, ele) {
+                if ( $(ele).is(active) ) {
+                    my_pick_index = i;
+                }
+            });
+            if (my_pick_index > 0) {
+                position = ROSTER[my_pick_index];
+                pick(getTopPlayerId(position));
+            }
         }
     }
 
-    , getTopPlayerId = function() {
-        var ele = $("#players .free")[0]
+    , getTopPlayerId = function(pos) {
+        var ele = $("#players .free").filter("[data-pos="+pos+"]")[0]
         , id = $(ele).data("id");
         return id;
     }
