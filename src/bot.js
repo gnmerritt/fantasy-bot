@@ -79,9 +79,10 @@ ff = function(document, window, undefined) {
         }
         ;
         console.log("Updating potential players");
+
         $(".potential tr").not(".head").filter(":visible").each(checkPlayer);
 
-        // also make sure that there's one available player of each type, so
+        // make sure that there's one available player of each type, so
         // we don't skip picks
         $.each(ROSTER, function(_, pos) {
             var ele = $(".potential tr").filter("[data-pos="+pos+"]")[0]
@@ -214,8 +215,13 @@ ff = function(document, window, undefined) {
             drawPotentials();
             refresh();
             $("#playerSearch").on("click", playerSearch);
+
+            // kick off a couple updates in case one doesn't finish
             updatePotentials();
-            setInterval(updatePotentials, 60000);
+            setTimeout(updatePotentials, 2000);
+            setTimeout(updatePotentials, 4000);
+            // and update once every 30 seconds
+            setInterval(updatePotentials, 30000);
         }
 
         , updatePicked: function() {
