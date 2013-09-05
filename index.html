@@ -14,15 +14,14 @@
  .left { float:left; }
  .right { float:right; }
  .active { background-color:yellow; font-weight:bold; }
- .free { background-color:#00FF00;}
+ .free { background-color:#00FF00; display:table-row !important; }
  .taken { background-color:red; }
 
  #roster { overflow:hidden; margin-left:-40px; }
  #roster li { float:left; padding:5px; list-style-type:none; }
 
+ .potential tr:nth-child(n + 30) { display:none; }
  .button { padding:15px; background-color:grey; border:1px solid black; }
-
- .potential tr:nth-child(n + 15) { display:none; }
 
   table { margin:20px 0; border:1px solid #333; }
   td, th { padding:5px; border-right:1px solid #333; border-bottom:1px solid #333; }

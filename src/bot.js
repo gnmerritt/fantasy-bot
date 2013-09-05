@@ -61,11 +61,10 @@ ff = function(document, window, undefined) {
             potentials.push(json);
         });
         render("potentials", {'players':potentials}, "#players");
-        setTimeout(updatePotentials, 300);
     }
 
     , updatePotentials = function() {
-        $(".potential tr").not(".head").filter(":visible").each(function(i, ele) {
+        var checkPlayer = function(i, ele )  {
             var id = $(ele).data("id")
             url = ["player", id, "status"].join("/")
             ;
@@ -77,6 +76,16 @@ ff = function(document, window, undefined) {
                     $(ele).addClass("free");
                 }
             });
+        }
+        ;
+        console.log("Updating potential players");
+        $(".potential tr").not(".head").filter(":visible").each(checkPlayer);
+
+        // also make sure that there's one available player of each type, so
+        // we don't skip picks
+        $.each(ROSTER, function(_, pos) {
+            var ele = $(".potential tr").filter("[data-pos="+pos+"]")[0]
+            checkPlayer(0, ele);
         });
     }
 
@@ -88,7 +97,6 @@ ff = function(document, window, undefined) {
             , mine = data.picks.filter(myTeam)
             ;
             render("pickList", {'mine':mine}, "#picks");
-            setTimeout(pickIfActive, 200);
         });
     }
 
@@ -99,9 +107,11 @@ ff = function(document, window, undefined) {
         , position
         ;
         if ( active.length ) {
+            console.log("Active! Picking...");
+            updatePotentials();
             picks.find("li").each(function(i, ele) {
                 if ( $(ele).is(active) ) {
-                    my_pick_index = i;
+                    my_pick_index = i + 1;
                 }
             });
             if (my_pick_index > 0) {
@@ -109,11 +119,15 @@ ff = function(document, window, undefined) {
                 pick(getTopPlayerId(position));
             }
         }
+        else {
+            console.log("Not my pick");
+        }
     }
 
     , getTopPlayerId = function(pos) {
         var ele = $("#players .free").filter("[data-pos="+pos+"]")[0]
         , id = $(ele).data("id");
+        console.log("trying to draft: " + $(ele).find(".n").html());
         return id;
     }
 
@@ -186,9 +200,11 @@ ff = function(document, window, undefined) {
     }
 
     , refresh = function() {
+        console.log("Refreshing...");
         getTeam();
         updatePicks();
-        updatePotentials();
+        setTimeout(refresh, 10000);
+        setTimeout(pickIfActive, 1500);
     }
     ;
 
@@ -197,12 +213,17 @@ ff = function(document, window, undefined) {
             drawRoster();
             drawPotentials();
             refresh();
-            setTimeout(refresh, 4000);
             $("#playerSearch").on("click", playerSearch);
+            updatePotentials();
+            setInterval(updatePotentials, 60000);
         }
 
         , updatePicked: function() {
             updatePotentials();
+        }
+
+        , pick: function() {
+            pickIfActive();
         }
     };
 }(document, window, undefined);
