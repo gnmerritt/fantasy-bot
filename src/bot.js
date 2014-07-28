@@ -7,7 +7,7 @@
 
 window.FantasyDrafter = function(config) {
     var BENCH = "BN"
-    , BENCH_SLOTS = [BENCH, "K", "DST"]
+    , BENCH_SLOTS = {"BN":true, "K":true, "DST":true}
     , urlPrefix = ["http://", config.HOST, config.PREFIX].join("")
     , base = dust.makeBase({
         KEY: config.KEY
@@ -17,6 +17,7 @@ window.FantasyDrafter = function(config) {
     , teamId
     , foundPlayers
     , roster = []
+    , bench = []
 
     , withKey = function( url ) {
         return url + "?key=" + config.KEY;
@@ -91,7 +92,7 @@ window.FantasyDrafter = function(config) {
         // make sure that there's one available player of each type, so
         // we don't skip picks
         $.each(roster, function(_, pos) {
-            var ele = $(".potential tr").filter("[data-pos="+pos+"]")[0]
+            var ele = $(".potential tr").filter("[data-pos="+pos+"]")[0];
             checkPlayer(0, ele);
         });
     }
@@ -197,8 +198,31 @@ window.FantasyDrafter = function(config) {
         player.url = withKey( urlPrefix + "player/" + player.id + "/status" );
     }
 
-    , getRoster = function() {
+    , getDraftInfo = function() {
+        call("draft", function(data) {
+            render("draft", {"draft": data}, "#draft");
+            getRoster(data);
+        });
+    }
 
+    , getRoster = function( draftJson ) {
+        var description = draftJson.roster.description
+        , slots = draftJson.roster.slots // for a sanity check
+        , rosterList = description.split(', ')
+        ;
+        bench = [];
+        roster = [];
+        $.each(rosterList, function(i, pos) {
+            if (BENCH_SLOTS[pos]) {
+                bench.push(pos);
+            }
+            else {
+                roster.push(pos);
+            }
+        });
+        if (bench.length + roster.length != slots) {
+            console.log("WARNING: possible problem finding roster");
+        }
     }
 
     , drawRoster = function() {
@@ -221,7 +245,7 @@ window.FantasyDrafter = function(config) {
 
     return {
         init: function() {
-            getRoster();
+            getDraftInfo();
             drawRoster();
             drawPotentials();
             refresh();

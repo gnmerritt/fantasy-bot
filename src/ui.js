@@ -15,3 +15,6 @@ dust.loadSource(dust.compile("<ul class='order'>{#slots}<li>{name}</li>{/slots}<
 
 dust.loadSource(dust.compile("{#configs}<option value='{name}' {?selected}selected='true'{/selected}>{name}</option>{/configs}",
                              "configs"));
+
+dust.loadSource(dust.compile("{#draft}<h2>{name}</h2><ul><li>Start time: {draft_start.str}</li><li>Time per pick: {time_per_pick_s}</li><li>Roster: {#roster}{description} ({slots} slots){/roster}</li></ul>{/draft}",
+                            "draft"));

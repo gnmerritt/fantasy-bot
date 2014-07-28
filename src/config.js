@@ -27,7 +27,7 @@ var DEFAULT_CONFIG = "defaultConfig"
     $( "select option:selected" ).each(function() {
         var name = $( this ).text();
         localStorage.setItem(DEFAULT_CONFIG, name);
-        loadConfig(name);
+        window.location.reload();
     });
 }
 
