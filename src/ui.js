@@ -12,3 +12,6 @@ dust.loadSource(dust.compile("<table><tr><th>Name<th>Position<th>ID<th>API Link{
 
 dust.loadSource(dust.compile("<ul class='order'>{#slots}<li>{name}</li>{/slots}</ul>",
                              "roster"));
+
+dust.loadSource(dust.compile("{#configs}<option value='{name}' {?selected}selected='true'{/selected}>{name}</option>{/configs}",
+                             "configs"));

@@ -3,17 +3,23 @@
  *
  * Data & config variables should be included on the page
  */
-ff = function(document, window, undefined) {
-    var urlPrefix = ["http://", HOST, PREFIX].join("")
+(function(document, window, undefined) {
+
+window.FantasyDrafter = function(config) {
+    var BENCH = "BN"
+    , BENCH_SLOTS = [BENCH, "K", "DST"]
+    , urlPrefix = ["http://", config.HOST, config.PREFIX].join("")
     , base = dust.makeBase({
-        KEY: KEY
-        , HOST: HOST
+        KEY: config.KEY
+        , HOST: config.HOST
     })
+
     , teamId
     , foundPlayers
+    , roster = []
 
     , withKey = function( url ) {
-        return url + "?key=" + KEY;
+        return url + "?key=" + config.KEY;
     }
 
     , call = function( method, callback, type ) {
@@ -84,7 +90,7 @@ ff = function(document, window, undefined) {
 
         // make sure that there's one available player of each type, so
         // we don't skip picks
-        $.each(ROSTER, function(_, pos) {
+        $.each(roster, function(_, pos) {
             var ele = $(".potential tr").filter("[data-pos="+pos+"]")[0]
             checkPlayer(0, ele);
         });
@@ -116,7 +122,7 @@ ff = function(document, window, undefined) {
                 }
             });
             if (my_pick_index > 0) {
-                position = ROSTER[my_pick_index];
+                position = roster[my_pick_index];
                 pick(getTopPlayerId(position));
             }
         }
@@ -191,10 +197,14 @@ ff = function(document, window, undefined) {
         player.url = withKey( urlPrefix + "player/" + player.id + "/status" );
     }
 
+    , getRoster = function() {
+
+    }
+
     , drawRoster = function() {
         var roster_list = []
         ;
-        $.each(ROSTER, function(i, s) {
+        $.each(roster, function(i, s) {
             roster_list.push({'name':s});
         });
         render("roster", {'slots':roster_list}, "#roster");
@@ -211,6 +221,7 @@ ff = function(document, window, undefined) {
 
     return {
         init: function() {
+            getRoster();
             drawRoster();
             drawPotentials();
             refresh();
@@ -232,4 +243,6 @@ ff = function(document, window, undefined) {
             pickIfActive();
         }
     };
-}(document, window, undefined);
+};
+
+})(document, window);

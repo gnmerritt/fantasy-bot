@@ -6,14 +6,19 @@
 <script src="jquery-2.0.3.min.js"></script>
 <script src="dust-full-0.3.0.min.js"></script>
 
-<!-- configuration files and pre-calc'd data -->
+<!-- bot code -->
+<script src="src/config.js"></script>
+<script src="src/bot.js"></script>
+<script src="src/ui.js"></script>
+
+<!-- pre-calc'd data -->
 <script src="data.js"></script>
+
+<!-- configuration files -->
 <script src="config-debug.js"></script>
 <script src="config-prod.js"></script>
 <script src="config-prod-2014.js"></script>
 
-<script src="src/bot.js"></script>
-<script src="src/ui.js"></script>
 <style type="text/css">
  .pane { width:45%; }
  .left { float:left; }
@@ -21,6 +26,9 @@
  .active { background-color:yellow; font-weight:bold; }
  .free { background-color:#00FF00; display:table-row !important; }
  .taken { background-color:red; }
+
+ .config * { display:inline-block; }
+ #configs { margin-left:50px; }
 
  #roster { overflow:hidden; margin-left:-40px; }
  #roster li { float:left; padding:5px; list-style-type:none; }
@@ -38,11 +46,16 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    ff.init();
+      config.init();
   });
 </script>
 
 <div class="left pane">
+
+<div class="config">
+  <h3>Config:</h3>
+  <select id="configs"></select>
+</div>
 
 <h3>My Team</h3>
 
