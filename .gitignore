@@ -2,3 +2,4 @@
 *.ods
 dust*js
 jquery*js
+venv/*
