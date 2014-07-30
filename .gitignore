@@ -1,5 +1,6 @@
 *csv*
 *.ods
+*pyc
 dust*js
 jquery*js
 venv/*
