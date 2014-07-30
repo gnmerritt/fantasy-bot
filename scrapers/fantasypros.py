@@ -6,7 +6,7 @@ import jsonpickle
 class PlayerData(object):
     def __init__(self, row, position):
         self.team = ""
-        self.pos = position.upper()
+        self.pos = position
         self.name = "INVALID"
         self.points = "-1"
         self.load_from_row(row)
@@ -39,10 +39,10 @@ class PlayerData(object):
 
 class FantasyProsScraper(object):
     BASE_URL = "http://www.fantasypros.com/nfl/projections/{pos}.php"
-    POSITIONS = ['qb', 'rb', 'wr', 'te', 'k']
+    POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K']
 
     def get_data(self, position):
-        url = self.BASE_URL.format(pos=position)
+        url = self.BASE_URL.format(pos=position.lower())
         print "  grabbing {}".format(url)
         r = requests.get(url)
         html = r.text
