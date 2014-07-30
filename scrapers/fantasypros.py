@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 import requests
 import jsonpickle
@@ -35,9 +36,10 @@ class PlayerData(object):
     def __str__(self):
         return self.__repr__()
 
+
 class FantasyProsScraper(object):
     BASE_URL = "http://www.fantasypros.com/nfl/projections/{pos}.php"
-    POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K']
+    POSITIONS = ['qb', 'rb', 'wr', 'te', 'k']
 
     def get_data(self, position):
         url = self.BASE_URL.format(pos=position)
@@ -46,7 +48,7 @@ class FantasyProsScraper(object):
         html = r.text
         soup = BeautifulSoup(html, "html5lib")
         data_table = soup.find(id="data")
-        return data_table
+        return self.get_update(soup), data_table
 
     def scrape_position(self, data_table, position):
         data = []
@@ -54,22 +56,35 @@ class FantasyProsScraper(object):
             if not row and row.find("td"):
                  continue
             data.append(PlayerData(row, position))
-        return data
+        return self.clean_data(data)
+
+    def clean_data(self, data):
+        return [d for d in data if d.name != "INVALID"]
+
+    def get_update(self, soup):
+        updated = soup.find(id="tip-updated")
+        if updated and updated.nextSibling:
+            date_str = updated.nextSibling
+            return re.sub(r'[^0-9]+', '', date_str)
 
     def scrape_all(self):
         players_by_position = {}
+        update = None
         for pos in self.POSITIONS:
-            data = self.get_data(pos)
+            pos_update, data = self.get_data(pos)
+            if not update:
+                update = pos_update
             players_by_position[pos] = self.scrape_position(data, pos)
             print "Finished with {}".format(pos)
-        return players_by_position
+        return update, players_by_position
 
-    # TODO latest update timestamp
 
 if __name__ == "__main__":
     s = FantasyProsScraper()
-    players = s.scrape_all()
+    update, players = s.scrape_all()
+    if not update:
+        update = "unknown"
     json = jsonpickle.encode(players, unpicklable=False)
-    outf = open('player_data.json', 'w')
+    outf = open('data/player_data_{}.json'.format(update), 'w')
     outf.write(json)
     outf.close()
