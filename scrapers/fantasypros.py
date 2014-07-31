@@ -86,5 +86,7 @@ if __name__ == "__main__":
         update = "unknown"
     json = jsonpickle.encode(players, unpicklable=False)
     outf = open('data/player_data_{}.json'.format(update), 'w')
+    outf.write("var PLAYER_POINTS=")
     outf.write(json)
+    outf.write(";")
     outf.close()
