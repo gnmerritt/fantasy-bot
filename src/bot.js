@@ -8,16 +8,21 @@
 window.FantasyDrafter = function(config) {
     var BENCH = "BN"
     , BENCH_SLOTS = {"BN":true, "K":true, "DST":true}
+    , GOT_INFO = "gotDraftInfo"
     , urlPrefix = ["http://", config.HOST, config.PREFIX].join("")
     , base = dust.makeBase({
         KEY: config.KEY
         , HOST: config.HOST
     })
 
+    // info about the draft
     , teamId
-    , foundPlayers
+    , draftInfo
     , roster = []
     , bench = []
+
+    , foundPlayers
+    , playerEstimates = {}
 
     , withKey = function( url ) {
         return url + "?key=" + config.KEY;
@@ -202,6 +207,8 @@ window.FantasyDrafter = function(config) {
         call("draft", function(data) {
             render("draft", {"draft": data}, "#draft");
             getRoster(data);
+            draftInfo = data;
+            $(window).trigger(GOT_INFO);
         });
     }
 
@@ -241,22 +248,32 @@ window.FantasyDrafter = function(config) {
         setTimeout(refresh, 10000);
         setTimeout(pickIfActive, 1500);
     }
+
+    , afterDraftInfo = function() {
+        playerEstimates = vorp(PLAYER_POINTS // input data
+                               , roster.concat(bench) // full roster
+                               , draftInfo.teams.length); // # teams
+        //drawPotentials();
+        //refresh();
+
+        $("#playerSearch").on("click", playerSearch);
+
+        // kick off a couple updates in case one doesn't finish
+        /*
+          updatePotentials();
+          setTimeout(updatePotentials, 2000);
+          setTimeout(updatePotentials, 4000);
+          // and update once every 30 seconds
+          setInterval(updatePotentials, 30000);
+        */
+    }
     ;
 
     return {
         init: function() {
             getDraftInfo();
             drawRoster();
-            drawPotentials();
-            refresh();
-            $("#playerSearch").on("click", playerSearch);
-
-            // kick off a couple updates in case one doesn't finish
-            updatePotentials();
-            setTimeout(updatePotentials, 2000);
-            setTimeout(updatePotentials, 4000);
-            // and update once every 30 seconds
-            setInterval(updatePotentials, 30000);
+            $(window).on(GOT_INFO, afterDraftInfo);
         }
 
         , updatePicked: function() {

@@ -10,7 +10,7 @@
  */
 (function(document, window, undefined) {
 
-window.vorp = function(pointEstimates, draftRoster, draftTeams) {
+window.vorp = function(pointEstimates, draftRoster, numTeams) {
     var POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
 
     /**
@@ -20,7 +20,7 @@ window.vorp = function(pointEstimates, draftRoster, draftTeams) {
      */
     , getReplacementValue = function(position, inputEstimates) {
         var teamDemand = getTeamDemand(position)
-        , totalDemand = teamDemand * draftTeams
+        , totalDemand = teamDemand * numTeams
 
         , players = inputEstimates[position] || []
         , replacementStart = Math.min(Math.ceil(totalDemand),
@@ -43,22 +43,16 @@ window.vorp = function(pointEstimates, draftRoster, draftTeams) {
     }
 
     /**
-     * Calculates demand for a position. Assign equal demand for all
-     * positions in a flex slot, and equal weight across all positions
-     * for bench slots.
+     * Calculates demand for starters @ a position. Assign equal demand for all
+     * positions in a flex slot.
      */
     , getTeamDemand = function(position) {
         var demand = 0;
         $.each(draftRoster, function(_, slot) {
             var flexOptions = slot.split("/").length
-            // Don't include kickers - nobody will have a backup kicker.
-            , positionOptions = POSITIONS.length - 1
             ;
             if (slot.indexOf(position) != -1) {
                 demand += (1 / flexOptions);
-            }
-            else if (slot === "BN" && position !== "K") {
-                demand += (1 / positionOptions);
             }
         });
         return demand;
@@ -111,6 +105,9 @@ window.vorp = function(pointEstimates, draftRoster, draftTeams) {
     , replacementValues = calculateReplacementValues(inputEstimates)
     ;
 
+    console.log("running for " + numTeams + " and " + draftRoster);
+    console.log("replacementValues: " + JSON.stringify(replacementValues));
+
     forEveryPlayer(inputEstimates, function(player) {
         player.vorb = player.points - replacementValues[player.pos];
     });
@@ -119,9 +116,3 @@ window.vorp = function(pointEstimates, draftRoster, draftTeams) {
 };
 
 })(document, window);
-
-$(document).ready(function() {
-    vorp(PLAYER_POINTS,
-         ["QB", "RB", "RB", "WR", "WR", "WR", "TE", "RB/WR/TE", "K", "DST", "BN", "BN", "BN", "BN", "BN"],
-         10);
-});
