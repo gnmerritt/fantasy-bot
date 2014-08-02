@@ -4,16 +4,13 @@
  * Data & config variables should be included on the page
  */
 (function(document, window, undefined) {
+ 'use strict';
 
 window.FantasyDrafter = function(config) {
     var BENCH = "BN"
     , BENCH_SLOTS = {"BN":true, "K":true, "DST":true}
     , GOT_INFO = "gotDraftInfo"
     , urlPrefix = ["http://", config.HOST, config.PREFIX].join("")
-    , base = dust.makeBase({
-        KEY: config.KEY
-        , HOST: config.HOST
-    })
 
     // info about the draft
     , teamId
@@ -46,13 +43,7 @@ window.FantasyDrafter = function(config) {
         var pickUrl = ["pick_player", playerid].join("/")
         ;
         call(pickUrl, function(data) {
-            console.log("drafted player, got msg back: "+ data.message);
-        });
-    }
-
-    , render = function(name, data, selector) {
-        dust.render(name, base.push(data), function(err, out) {
-            $(selector).html(out);
+            log("drafted player, got msg back: "+ data.message);
         });
     }
 
@@ -90,7 +81,7 @@ window.FantasyDrafter = function(config) {
             });
         }
         ;
-        console.log("Updating potential players");
+        log("Updating potential players");
 
         $(".potential tr").not(".head").filter(":visible").each(checkPlayer);
 
@@ -120,7 +111,7 @@ window.FantasyDrafter = function(config) {
         , position
         ;
         if ( active.length ) {
-            console.log("Active! Picking...");
+            log("Active! Picking...");
             updatePotentials();
             picks.find("li").each(function(i, ele) {
                 if ( $(ele).is(active) ) {
@@ -133,14 +124,14 @@ window.FantasyDrafter = function(config) {
             }
         }
         else {
-            console.log("Not my pick");
+            log("Not my pick");
         }
     }
 
     , getTopPlayerId = function(pos) {
         var ele = $("#players .free").filter("[data-pos="+pos+"]")[0]
         , id = $(ele).data("id");
-        console.log("trying to draft: " + $(ele).find(".n").html());
+        log("trying to draft: " + $(ele).find(".n").html());
         return id;
     }
 
@@ -228,7 +219,7 @@ window.FantasyDrafter = function(config) {
             }
         });
         if (bench.length + roster.length != slots) {
-            console.log("WARNING: possible problem finding roster");
+            log("WARNING: possible problem finding roster");
         }
     }
 
@@ -242,7 +233,7 @@ window.FantasyDrafter = function(config) {
     }
 
     , refresh = function() {
-        console.log("Refreshing...");
+        log("Refreshing...");
         getTeam();
         updatePicks();
         setTimeout(refresh, 10000);

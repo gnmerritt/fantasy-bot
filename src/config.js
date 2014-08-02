@@ -4,6 +4,7 @@ var CONFIG = {};
  * Configuration manager, allows for switching between multiple teams
  */
 config = function(document, window, undefined) {
+ 'use strict';
 
 var DEFAULT_CONFIG = "defaultConfig"
 
@@ -18,15 +19,14 @@ var DEFAULT_CONFIG = "defaultConfig"
         }
         configs.push(data);
     });
-    dust.render("configs", {"configs": configs}, function(err, out) {
-        $("#configs").html(out);
-    });
+    render("configs", {"configs": configs}, "#configs");
 }
 
 , switchConfig = function() {
     $( "select option:selected" ).each(function() {
         var name = $( this ).text();
         localStorage.setItem(DEFAULT_CONFIG, name);
+        log("reloading with new config", name);
         window.location.reload();
     });
 }

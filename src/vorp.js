@@ -9,6 +9,7 @@
  *   Decorated input object with VORP added to each player
  */
 (function(document, window, undefined) {
+ 'use strict';
 
 window.vorp = function(pointEstimates, draftRoster, numTeams) {
     var POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
@@ -32,14 +33,6 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
         , replacementValue = averagePoints(replacementPlayers)
         ;
         return replacementValue;
-    }
-
-    , averagePoints = function(players) {
-        var total = 0;
-        $.each(players, function(_, player) {
-            total += player.points;
-        });
-        return total / Math.max(players.length, 1);
     }
 
     /**
@@ -69,24 +62,13 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
         return replacementValues
     }
 
-    /**
-     * Call the action function for every player
-     */
-    , forEveryPlayer = function(input, action) {
-        $.each(input, function(pos, playerList) {
-            $.each(playerList, function(i, player) {
-                action(player);
-            });
-        });
-    }
-
     , cleanInput = function(input) {
         var estimates = JSON.parse(JSON.stringify(input)) // :-P
         ;
         // convert player points to a float
         forEveryPlayer(estimates, function(player) {
             var pointsStr = player.points
-            pointsFloat = parseFloat(pointsStr)
+            , pointsFloat = parseFloat(pointsStr)
             ;
             player.points = pointsFloat;
         });
@@ -105,7 +87,7 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
     , replacementValues = calculateReplacementValues(inputEstimates)
     ;
 
-    console.log("running for " + numTeams + " and " + draftRoster);
+    console.log("running for " + numTeams + " teams, roster: " + draftRoster);
     console.log("replacementValues: " + JSON.stringify(replacementValues));
 
     forEveryPlayer(inputEstimates, function(player) {

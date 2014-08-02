@@ -1,0 +1,73 @@
+/**
+ * Shared utility stuff
+ */
+
+/**
+ * Full version of `log` that:
+ *   - Prevents errors on console methods when no console present.
+ *   - Exposes a global 'log' function that preserves line numbering and formatting.
+ * credit: http://www.briangrinstead.com/blog/console-log-helper-function
+ */
+(function () {
+    var method
+    , noop = function () { }
+    , methods = [
+        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+        'timeStamp', 'trace', 'warn'
+    ]
+    , length = methods.length
+    , console = (window.console = window.console || {})
+    ;
+
+    while (length--) {
+        method = methods[length];
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
+    }
+
+    if (Function.prototype.bind) {
+        window.log = Function.prototype.bind.call(console.log, console);
+    }
+    else {
+        window.log = function() {
+            Function.prototype.apply.call(console.log, console, arguments);
+        };
+    }
+})();
+
+/**
+ * Call the action function for every player on the input map
+ *  {position -> [players], ...}
+ */
+window.forEveryPlayer = function(input, action) {
+    $.each(input, function(pos, playerList) {
+        $.each(playerList, function(i, player) {
+            action(player);
+        });
+    });
+}
+
+window.averagePoints = function(players) {
+    var total = 0;
+    $.each(players, function(_, player) {
+        total += player.points;
+    });
+    return total / Math.max(players.length, 1);
+}
+
+/**
+ * Thin wrapper around dust.render - should be the only place dust is referenced
+ */
+window.render = (function() {
+    var base = dust.makeBase({});
+
+    return function(name, data, selector) {
+        dust.render(name, base.push(data), function(err, out) {
+            $(selector).html(out);
+        });
+    }
+})();
