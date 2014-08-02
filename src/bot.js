@@ -209,7 +209,7 @@ window.FantasyDrafter = function(config) {
         }
         call("draft", function(data) {
             render("draft", {"draft": data}, "#draft");
-            getRoster(draftJson.roster.description, draftJson.roster.slots);
+            getRoster(data.roster.description, data.roster.slots);
             draftInfo = data;
             draftInfo.numTeams = draftInfo.teams.length;
             $(window).trigger(GOT_INFO);
@@ -244,7 +244,6 @@ window.FantasyDrafter = function(config) {
 
     , afterDraftInfo = function() {
         // Stage 1: calculate vorp for players
-        debugger;
         playerEstimates = vorp(PLAYER_POINTS // input data
                                , roster.concat(bench) // full roster
                                , draftInfo.numTeams); // # teams
