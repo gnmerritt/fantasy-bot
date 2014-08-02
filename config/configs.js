@@ -10,3 +10,11 @@ CONFIG["PROD-2013"] = {
     , HOST: "draft.gnmerritt.net"
     , PREFIX: "/api/v1/"
 };
+
+CONFIG["YAHOO-MOCK"] = {
+    KEY: "", HOST: "", PREFIX: ""
+    , MANUAL: true
+    , ROSTER: "QB, RB, RB, WR, WR, WR, TE, RB/WR/TE, K, DST, BN, BN, BN, BN, BN"
+    , ROSTER_SLOTS: 15
+    , TEAMS: 10
+};

@@ -87,11 +87,12 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
     , replacementValues = calculateReplacementValues(inputEstimates)
     ;
 
-    console.log("running for " + numTeams + " teams, roster: " + draftRoster);
+    console.log("running VORP for " + numTeams + " teams, roster: " + draftRoster);
     console.log("replacementValues: " + JSON.stringify(replacementValues));
 
-    forEveryPlayer(inputEstimates, function(player) {
+    forEveryPlayer(inputEstimates, function(player, pos_rank) {
         player.vorp = (player.points - replacementValues[player.pos]).toFixed(2);
+        player.pos_rank = pos_rank + 1;
     });
 
     return inputEstimates;

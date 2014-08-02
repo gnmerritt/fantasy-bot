@@ -57,14 +57,16 @@ window.FantasyDrafter = function(config) {
                 , 'last_name': p.last_name
                 , 'team': p.team
                 , 'fantasy_position': p.pos
-                , 'pos_rank': 1
-                , 'id': 1
+                , 'pos_rank': p.pos_rank
+                , 'id': p.id
                 , 'points': p.points
                 , 'vorp': p.vorp
             };
             potentials.push(json);
         });
-        render("potentials", {'players':potentials}, "#players");
+        render("potentials", {
+            'players': potentials
+        }, "#players");
     }
 
     , updatePotentials = function() {
@@ -196,18 +198,26 @@ window.FantasyDrafter = function(config) {
     }
 
     , getDraftInfo = function() {
+        if (config.MANUAL) {
+            log("Using manual draft information");
+            getRoster(config.ROSTER, config.ROSTER_SLOTS);
+            draftInfo = {
+                numTeams: config.TEAMS
+            };
+            $(window).trigger(GOT_INFO);
+            return;
+        }
         call("draft", function(data) {
             render("draft", {"draft": data}, "#draft");
-            getRoster(data);
+            getRoster(draftJson.roster.description, draftJson.roster.slots);
             draftInfo = data;
+            draftInfo.numTeams = draftInfo.teams.length;
             $(window).trigger(GOT_INFO);
         });
     }
 
-    , getRoster = function( draftJson ) {
-        var description = draftJson.roster.description
-        , slots = draftJson.roster.slots // for a sanity check
-        , rosterList = description.split(', ')
+    , getRoster = function( description, slots ) {
+        var rosterList = description.split(', ')
         ;
         bench = [];
         roster = [];
@@ -233,29 +243,36 @@ window.FantasyDrafter = function(config) {
     }
 
     , afterDraftInfo = function() {
+        // Stage 1: calculate vorp for players
+        debugger;
         playerEstimates = vorp(PLAYER_POINTS // input data
                                , roster.concat(bench) // full roster
-                               , draftInfo.teams.length); // # teams
+                               , draftInfo.numTeams); // # teams
+        // Stage 2: match players to draft API
+        if (!config.MANUAL) {
+            var matched = (new IdMatcher(playerEstimates)).match();
+        }
+
         drawPotentials();
-        refresh();
 
-        $("#playerSearch").on("click", playerSearch);
-
-        // kick off a couple updates in case one doesn't finish
-        /*
-          updatePotentials();
-          setTimeout(updatePotentials, 2000);
-          setTimeout(updatePotentials, 4000);
-          // and update once every 30 seconds
-          setInterval(updatePotentials, 30000);
-        */
+        if (!config.MANUAL) {
+            /*
+              refresh();
+              updatePotentials();
+              // and update once every 30 seconds
+              setInterval(updatePotentials, 30000);
+            */
+        }
+        else {
+            // TODO: set up manual click handlers
+        }
     }
     ;
 
     return {
         init: function() {
-            getDraftInfo();
             $(window).on(GOT_INFO, afterDraftInfo);
+            getDraftInfo();
         }
 
         , updatePicked: function() {

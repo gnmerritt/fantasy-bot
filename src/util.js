@@ -46,7 +46,7 @@
 window.forEveryPlayer = function(input, action) {
     $.each(input, function(pos, playerList) {
         $.each(playerList, function(i, player) {
-            action(player);
+            action(player, i);
         });
     });
 }
