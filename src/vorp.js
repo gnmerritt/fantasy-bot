@@ -81,7 +81,7 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
 
     //
     // Now do the real work. Clean the input, calculate replacement values
-    // and return a decorated version of the input object with vorb
+    // and return a decorated version of the input object with vorp
     //
     , inputEstimates = cleanInput(pointEstimates)
     , replacementValues = calculateReplacementValues(inputEstimates)
@@ -91,7 +91,7 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
     console.log("replacementValues: " + JSON.stringify(replacementValues));
 
     forEveryPlayer(inputEstimates, function(player) {
-        player.vorb = player.points - replacementValues[player.pos];
+        player.vorp = (player.points - replacementValues[player.pos]).toFixed(2);
     });
 
     return inputEstimates;

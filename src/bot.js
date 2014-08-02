@@ -50,17 +50,18 @@ window.FantasyDrafter = function(config) {
     , drawPotentials = function() {
         var potentials = []
         ;
-        $.each(PLAYER_RANKINGS, function(i, p) {
+        forEveryPlayer(playerEstimates, function(p) {
             var json = {
-                'rank':p[0],
-                'first_name':p[1],
-                'last_name':p[2],
-                'team':p[3],
-                'fantasy_position':p[4],
-                'pos_rank':p[5],
-                'id':p[6]
+                'rank': 1
+                , 'first_name': p.first_name
+                , 'last_name': p.last_name
+                , 'team': p.team
+                , 'fantasy_position': p.pos
+                , 'pos_rank': 1
+                , 'id': 1
+                , 'points': p.points
+                , 'vorp': p.vorp
             };
-            addApiLink( json );
             potentials.push(json);
         });
         render("potentials", {'players':potentials}, "#players");
@@ -223,15 +224,6 @@ window.FantasyDrafter = function(config) {
         }
     }
 
-    , drawRoster = function() {
-        var roster_list = []
-        ;
-        $.each(roster, function(i, s) {
-            roster_list.push({'name':s});
-        });
-        render("roster", {'slots':roster_list}, "#roster");
-    }
-
     , refresh = function() {
         log("Refreshing...");
         getTeam();
@@ -244,8 +236,8 @@ window.FantasyDrafter = function(config) {
         playerEstimates = vorp(PLAYER_POINTS // input data
                                , roster.concat(bench) // full roster
                                , draftInfo.teams.length); // # teams
-        //drawPotentials();
-        //refresh();
+        drawPotentials();
+        refresh();
 
         $("#playerSearch").on("click", playerSearch);
 
@@ -263,7 +255,6 @@ window.FantasyDrafter = function(config) {
     return {
         init: function() {
             getDraftInfo();
-            drawRoster();
             $(window).on(GOT_INFO, afterDraftInfo);
         }
 

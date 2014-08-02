@@ -7,7 +7,7 @@ class PlayerData(object):
     def __init__(self, row, position):
         self.team = ""
         self.pos = position
-        self.name = "INVALID"
+        self.first_name = self.last_name = "INVALID"
         self.points = "-1"
         self.load_from_row(row)
 
@@ -17,7 +17,9 @@ class PlayerData(object):
             return
         name_link = tds[0].find("a")
         if name_link and name_link.contents:
-            self.name = self.to_unicode(name_link.contents)
+            name = self.to_unicode(name_link.contents).split(" ")
+            self.first_name = name[0]
+            self.last_name = name[1]
         team = tds[0].find("small")
         if team and team.contents:
             paren_team = self.to_unicode(team.contents)
@@ -32,7 +34,8 @@ class PlayerData(object):
             return unicode(bs4_contents[0])
 
     def __repr__(self):
-        return ','.join([self.name, self.pos, self.team, self.points])
+        return ','.join([self.first_name, self.last_name,
+                         self.pos, self.team, self.points])
     def __str__(self):
         return self.__repr__()
 
@@ -59,7 +62,7 @@ class FantasyProsScraper(object):
         return self.clean_data(data)
 
     def clean_data(self, data):
-        return [d for d in data if d.name != "INVALID"]
+        return [d for d in data if d.first_name != "INVALID"]
 
     def get_update(self, soup):
         updated = soup.find(id="tip-updated")
