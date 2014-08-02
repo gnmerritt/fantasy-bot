@@ -1,8 +1,6 @@
 *csv*
 *.ods
 *pyc
-dust*js
-jquery*js
 data/*
 venv/*
 config/prod-2014.js
