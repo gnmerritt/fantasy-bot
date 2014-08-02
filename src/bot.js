@@ -51,19 +51,9 @@ window.FantasyDrafter = function(config) {
         var potentials = []
         ;
         forEveryPlayer(playerEstimates, function(p) {
-            var json = {
-                'rank': 1
-                , 'first_name': p.first_name
-                , 'last_name': p.last_name
-                , 'team': p.team
-                , 'fantasy_position': p.pos
-                , 'pos_rank': p.pos_rank
-                , 'id': p.id
-                , 'points': p.points
-                , 'vorp': p.vorp
-            };
-            potentials.push(json);
+            potentials.push(p);
         });
+        potentials.sort(function(a,b) { return b.vorp - a.vorp; });
         render("potentials", {
             'players': potentials
         }, "#players");
