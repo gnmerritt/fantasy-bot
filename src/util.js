@@ -51,6 +51,18 @@ window.forEveryPlayer = function(input, action) {
     });
 }
 
+/**
+ * Given a dict of players by postion, get back a single sorted list
+ */
+window.playersByVorp = function(inputPlayers) {
+    var players = [];
+    forEveryPlayer(inputPlayers, function(p) {
+        players.push(p);
+    });
+    players.sort(function(a,b) { return b.vorp - a.vorp; });
+    return players;
+}
+
 window.averagePoints = function(players) {
     var total = 0;
     $.each(players, function(_, player) {
@@ -71,3 +83,27 @@ window.render = (function() {
         });
     }
 })();
+
+/**
+ * Function generator that returns an config specific call function
+ */
+window.makeCall = function(config) {
+    var urlPrefix = ["http://", config.HOST, config.PREFIX].join("")
+    , withKey = function( url ) {
+        return url + "?key=" + config.KEY;
+    }
+    ;
+    return function( method, callback, type ) {
+        var url = withKey( urlPrefix + method )
+        , verb = type || "GET"
+        ;
+        $.ajax({
+            type: verb,
+            url: url,
+            crossDomain: true,
+            contentType: "application/json; charset=utf-8",
+            dataType: "jsonp",
+            success: callback
+        });
+    }
+}

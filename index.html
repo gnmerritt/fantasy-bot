@@ -26,9 +26,14 @@
  .pane { width:45%; }
  .left { float:left; }
  .right { float:right; }
+
+ .potential tr:nth-child(n + 40) { display:none; }
+ .potential tr { -webkit-transition: all 3s ease; }
+
  .active { background-color:yellow; font-weight:bold; }
  .free { background-color:#00FF00; display:table-row !important; }
  .taken { background-color:red; }
+ .hasId { background-color:yellow; }
 
  .config * { display:inline-block; }
  #configs { margin-left:50px; }
@@ -36,7 +41,6 @@
  #roster { overflow:hidden; margin-left:-40px; }
  #roster li { float:left; padding:5px; list-style-type:none; }
 
- .potential tr:nth-child(n + 25) { display:none; }
  .button { padding:15px; background-color:grey; border:1px solid black; }
 
   table { margin:20px 0; border:1px solid #333; }
