@@ -150,9 +150,7 @@ window.FantasyDrafter = function(config) {
         // Stage 2: match players to draft API. The matcher will decorate
         // the existing playerEstimates object for us as it finds matches
         if (!config.MANUAL) {
-            setTimeout(function() {
-//                new IdMatcher(playerEstimates, config).match();
-            }, 1);
+            new IdMatcher(playerEstimates, config).match();
         }
 
         drawPotentials();

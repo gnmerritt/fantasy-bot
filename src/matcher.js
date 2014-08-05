@@ -5,7 +5,7 @@
  'use strict';
 
 window.IdMatcher = function(playerEstimates, config) {
-    var SEARCH_LIMIT = 100 // searches allowed per minute
+    var SEARCH_LIMIT = 60 // searches allowed per minute
 
     , call = makeCall(config)
 
@@ -13,24 +13,27 @@ window.IdMatcher = function(playerEstimates, config) {
     , pendingSearches = []
 
     , runPending = function() {
-        var searchFunc;
+        var searchFunc
+        , ranNow = 0
+        ;
         while (searchesPastMinute < SEARCH_LIMIT) {
-            searchFunc = pendingSearches.pop();
+            // arbitrary throttling
+            if (ranNow > 30) {
+                return;
+            }
+            searchFunc = pendingSearches.shift();
             if ($.isFunction(searchFunc)) {
                 searchFunc();
+                ranNow++;
             }
         }
     }
 
     , search = function( player ) {
-        var first_name = player.first_name
-        , last_name = player.last_name
-        , position = player.pos
-        , searchUrl = ["search",
-                       "name", encodeURIComponent(last_name),
-                       "pos", position].join("/")
+        var searchUrl = ["search",
+                       "name", escape(player.last_name),
+                       "pos", player.pos].join("/")
         , gotId = function(match) {
-            console.log("got id for " + first_name + last_name);
             player.id = match.id;
         }
         , onResults = function(data) {
@@ -40,9 +43,10 @@ window.IdMatcher = function(playerEstimates, config) {
             }
             else if ( data.results ) { // Look a little harder
                 $.each(data.results, function(i, result) {
-                    var resultName = result.first_name.toLowerCase();
-                    if ( resultName.indexOf(first_name) > -1 ) {
+                    var resultName = result.first_name.toLowerCase()
+                    if ( resultName.indexOf(player.first_name.toLowerCase()) > -1 ) {
                         gotId(result);
+                        return;
                     }
                 });
             }
@@ -50,14 +54,14 @@ window.IdMatcher = function(playerEstimates, config) {
         ;
         return function() {
             searchesPastMinute++;
-            call(searchUrl, onResults)
+            call(searchUrl, onResults);
             // after a minute, the API limit has expired so open a slot up
             setTimeout(function() { searchesPastMinute--; }, 60 * 1000);
         };
     }
 
     , queueSearch = function(player) {
-        var searchFunc = search(player)
+        var searchFunc = search(player);
         pendingSearches.push(searchFunc);
     }
     ;
@@ -68,13 +72,9 @@ window.IdMatcher = function(playerEstimates, config) {
     return {
         match: function() {
             log("Starting player matching");
-            $.each(playersByVorp(playerEstimates), function(p) {
+            $.each(playersByVorp(playerEstimates), function(i, p) {
                 queueSearch(p);
             });
-        }
-
-        , search: function() {
-            runPending();
         }
     }
 };
