@@ -37,14 +37,22 @@ window.FantasyDrafter = function(config) {
     }
 
     , updatePotentials = function(callback) {
-        log("Updating potential players");
-        forEveryPlayer(playerEstimates, function(player) {
-            if (!player.id || !!player.taken) {
+        var updated = 0;
+        $.each(playersByVorp(playerEstimates), function(i, player) {
+            if (!player.id || !!player.taken || updated > 50) {
                 return;
             }
+            updated++;
             call(["player", player.id, "status"].join("/"), function(data) {
-                if ( data && data.fantasy_team ) {
+                if ( !data ) {
+                    return
+                }
+                if ( data.fantasy_team ) {
                     player.taken = true;
+                    player.free = false;
+                }
+                else {
+                    player.free = true;
                 }
             });
         });
@@ -77,9 +85,6 @@ window.FantasyDrafter = function(config) {
                 playerId = getTopPlayerId();
                 pick(playerId);
             });
-        }
-        else {
-            log("Not my pick");
         }
     }
 
@@ -137,9 +142,9 @@ window.FantasyDrafter = function(config) {
     }
 
     , refresh = function() {
-        log("Refreshing...");
         getTeam();
         updatePicks();
+        drawPotentials();
     }
 
     , afterDraftInfo = function() {
@@ -158,12 +163,10 @@ window.FantasyDrafter = function(config) {
         if (!config.MANUAL) {
             refresh();
             updatePotentials();
-            /*
-              setInterval(drawPotentials, 5 * 1000);
-              setInterval(refresh, 10 * 1000);
-              setInterval(pickIfActive, 1.5 * 1000);
-              setInterval(updatePotentials, 30 * 1000);
-            */
+
+            setInterval(refresh, 10 * 1000);
+            setInterval(pickIfActive, 1.5 * 1000);
+            setInterval(updatePotentials, 30 * 1000);
         }
         else {
             // TODO: set up manual click handlers
@@ -175,18 +178,6 @@ window.FantasyDrafter = function(config) {
         init: function() {
             $(window).on(GOT_INFO, afterDraftInfo);
             getDraftInfo();
-        }
-
-        , updatePicked: function() {
-            updatePotentials();
-        }
-
-        , redraw: function() {
-            drawPotentials();
-        }
-
-        , pick: function() {
-            pickIfActive();
         }
     };
 };
