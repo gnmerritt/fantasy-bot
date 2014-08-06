@@ -77,9 +77,12 @@ window.averagePoints = function(players) {
 window.render = (function() {
     var base = dust.makeBase({});
 
-    return function(name, data, selector) {
+    return function(name, data, selector, callback) {
         dust.render(name, base.push(data), function(err, out) {
             $(selector).html(out);
+            if ($.isFunction(callback)) {
+                callback();
+            }
         });
     }
 })();

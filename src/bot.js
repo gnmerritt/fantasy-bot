@@ -9,7 +9,10 @@
 window.FantasyDrafter = function(config) {
     var BENCH = "BN"
     , BENCH_SLOTS = {"BN":true, "K":true, "DST":true}
+
+    // events
     , GOT_INFO = "gotDraftInfo"
+    , DATA_CHANGE = "dataChange"
 
     // info about the draft
     , teamId
@@ -164,12 +167,12 @@ window.FantasyDrafter = function(config) {
             refresh();
             updatePotentials();
 
-            setInterval(refresh, 10 * 1000);
+            setInterval(refresh, 5 * 1000);
             setInterval(pickIfActive, 1.5 * 1000);
             setInterval(updatePotentials, 30 * 1000);
         }
         else {
-            // TODO: set up manual click handlers
+            new ManualDraft(config);
         }
     }
     ;

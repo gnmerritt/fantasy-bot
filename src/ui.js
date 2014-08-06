@@ -9,7 +9,7 @@ dust.loadSource(dust.compile(
     "pickList"));
 
 dust.loadSource(dust.compile(
-    "<table class='potential'><tr class='head'><td>Rank<th>Name<th>Team<th>Position<th>Points<th>VORP<th>ID{#players}"
+    "<table class='potential'><tr class='head'><th>Rank<th>Name<th>Team<th>Position<th>Points<th>VORP<th>ID{#players}"
   + "<tr data-id='{id}' data-pos='{pos}' class='{?id}hasId{/id}{?taken} taken{/taken} {?free} free{/free}'><td>{$idx}<td class='n'>{first_name} {last_name}<td>{team}<td>{pos} ({pos_rank})<td>{points}<td>{vorp}<td>{id}</tr>{/players}</table>",
                             "potentials"));
 
@@ -21,3 +21,9 @@ dust.loadSource(dust.compile("{#configs}<option value='{name}' {?selected}select
 
 dust.loadSource(dust.compile("{#draft}<h2>{name}</h2><ul><li>Start time: {draft_start.str}</li><li>Time per pick: {time_per_pick_s}</li><li>Roster: {#roster}{description} ({slots} slots){/roster}</li></ul>{/draft}",
                             "draft"));
+
+dust.loadSource(dust.compile(
+    "<div class='manualBtn'>"
+  + "<span class='draft'>Draft</span><span class='remove'>Remove</span><span class='close'>Close</span>"
+  + "</div>"
+    , "manualPopup"));

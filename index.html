@@ -12,6 +12,7 @@
 <script src="src/bot.js"></script>
 <script src="src/vorp.js"></script>
 <script src="src/matcher.js"></script>
+<script src="src/manual.js"></script>
 <script src="src/util.js"></script>
 <script src="src/ui.js"></script>
 
@@ -28,7 +29,7 @@
  .right { float:right; }
 
  .potential tr:nth-child(n + 40) { display:none; }
- .potential tr { -webkit-transition: all 3s ease; }
+ .potential tr { -webkit-transition: all 2s ease; }
 
  .active { background-color:yellow; font-weight:bold; }
  .hasId { background-color:yellow; }
@@ -48,6 +49,12 @@
   td, th { padding:5px; border-right:1px solid #333; border-bottom:1px solid #333; }
   td:last-child, th:last-child { border-right-width:0; }
   tr:last-child td { border-bottom-width:0; }
+
+  #manualPopup { position:absolute; font-size:18px; display:none; background-color:#404040; z-index:100; }
+  #manualPopup span { padding:8px; }
+  #manualPopup .draft { background-color:green; }
+  #manualPopup .remove { background-color:red; }
+  #manualPopup .close { background-color:blue; }
 </style>
 </head>
 <body>
@@ -82,6 +89,7 @@
 <div class="right pane">
 
 <h3>Draft board</h3>
+<div id="manualPopup"></div>
 <div id="players"></div>
 
 </div> <!-- end of right pane -->
