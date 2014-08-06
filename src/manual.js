@@ -1,13 +1,12 @@
 (function(document, window, undefined) {
  'use strict';
 
-window.ManualDraft = function(config) {
-    var CHANGE_EVENT = "manualChange"
-    , CLOSE_POPUP = "popupClose"
-
-    , updateRecommendation = function() {
-
-    }
+/**
+ * Manual draft helper - adds a click handler to draft or mark players
+ * as removed.
+ */
+window.ManualDraft = function(playerEstimates, config) {
+    var CLOSE_POPUP = "popupClose"
 
     , addRow = function(table, row) {
         table.append("<tr>" + row.html() + "</tr>");
@@ -33,13 +32,12 @@ window.ManualDraft = function(config) {
         , removePlayer = function() {
             $(window).trigger(CLOSE_POPUP);
             playerRow.remove();
-            $(window).trigger(CHANGE_EVENT);
         }
         , draftPlayer = function() {
             addRow($("#drafted table"), playerRow);
-            playerRow.remove();
             $(window).trigger(CLOSE_POPUP);
-            $(window).trigger(CHANGE_EVENT);
+            $(window).trigger(window.ff.DRAFTED, playerRow.data("pos"));
+            playerRow.remove();
         }
         ;
         $(window).trigger(CLOSE_POPUP);
@@ -67,9 +65,14 @@ window.ManualDraft = function(config) {
     //
     // Set up the manual drafting page & handlers
     //
+    // mark all players as free, since this is a manual draft
+    forEveryPlayer(playerEstimates, function(p) {
+        p.free = true;
+    });
+    $(window).trigger(window.ff.UPDATE);
+
     setupDrafted();
     attachHandlers();
-    $(window).on(CHANGE_EVENT, updateRecommendation);
 };
 
 })(document, window);

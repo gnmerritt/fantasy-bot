@@ -10,11 +10,11 @@ dust.loadSource(dust.compile(
 
 dust.loadSource(dust.compile(
     "<table class='potential'><tr class='head'><th>Rank<th>Name<th>Team<th>Position<th>Points<th>VORP<th>ID{#players}"
-  + "<tr data-id='{id}' data-pos='{pos}' class='{?id}hasId{/id}{?taken} taken{/taken} {?free} free{/free}'><td>{$idx}<td class='n'>{first_name} {last_name}<td>{team}<td>{pos} ({pos_rank})<td>{points}<td>{vorp}<td>{id}</tr>{/players}</table>",
+  + "{^taken}<tr data-id='{id}' data-pos='{pos}' class='{?id}hasId{/id}{?free} free{/free}'><td>{$idx}<td class='n'>{first_name} {last_name}<td>{team}<td>{pos} ({pos_rank})<td>{points}<td>{vorp}<td>{id}</tr>{/taken}{/players}</table>",
                             "potentials"));
 
-dust.loadSource(dust.compile("<table><tr><th>Name<th>Position<th>ID<th>API Link{#players}<tr data-pos='{fantasy_position}'><td>{first_name} {last_name}<td>{fantasy_position}<td>{id}<td>{?url}<a href='{url}'>Found</a>{:else}Not found{/url}</tr>{/players}</table>",
-                            "drafted"));
+dust.loadSource(dust.compile("<table><tr><th>Name<th>Position<th>ID{#players}<tr data-pos='{fantasy_position}'><td>{first_name} {last_name}<td>{fantasy_position}<td>{id}</tr>{/players}</table>",
+                             "drafted"));
 
 dust.loadSource(dust.compile("{#configs}<option value='{name}' {?selected}selected='true'{/selected}>{name}</option>{/configs}",
                              "configs"));

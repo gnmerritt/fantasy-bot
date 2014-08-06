@@ -13,23 +13,28 @@ window.FantasyDrafter = function(config) {
     // events
     , GOT_INFO = "gotDraftInfo"
     , DATA_CHANGE = "dataChange"
+    , DRAFTED_PLAYER = "drafted"
 
     // info about the draft
     , teamId
     , draftInfo
     , roster = []
     , bench = []
+    , alreadyDrafted = []
 
     , playerEstimates = {}
 
     , call = makeCall(config) // API interacting function
 
-    , pick = function( playerid ) {
-        var pickUrl = ["pick_player", playerid].join("/")
+    , pick = function( player ) {
+        var pickUrl = ["pick_player", player.id].join("/")
         ;
-        log("trying to draft: " + $(ele).find(".n").html());
+        log("trying to draft: " + player.first_name + " " + player.last_name);
         call(pickUrl, function(data) {
             log("drafted player, got msg back: "+ data.message);
+            if (data.code !== 200) {
+                pickIfActive();
+            }
         });
     }
 
@@ -39,7 +44,7 @@ window.FantasyDrafter = function(config) {
         }, "#players");
     }
 
-    , updatePotentials = function(callback) {
+    , updatePlayerAvailability = function(callback) {
         var updated = 0;
         $.each(playersByVorp(playerEstimates), function(i, player) {
             if (!player.id || !!player.taken || updated > 50) {
@@ -48,7 +53,7 @@ window.FantasyDrafter = function(config) {
             updated++;
             call(["player", player.id, "status"].join("/"), function(data) {
                 if ( !data ) {
-                    return
+                    return;
                 }
                 if ( data.fantasy_team ) {
                     player.taken = true;
@@ -57,6 +62,7 @@ window.FantasyDrafter = function(config) {
                 else {
                     player.free = true;
                 }
+                $(window).trigger(DATA_CHANGE);
             });
         });
 
@@ -80,23 +86,30 @@ window.FantasyDrafter = function(config) {
     , pickIfActive = function() {
         var  picks = $('#picks')
         , active = picks.find('.active')
-        , playerId
+        , player
         ;
         if ( active.length ) {
             log("Active! Picking...");
-            updatePotentials(function() {
-                playerId = getTopPlayerId();
-                pick(playerId);
+            updatePlayerAvailability(function() {
+                player = getTopPlayer();
+                pick(player);
             });
         }
     }
 
-    , getTopPlayerId = function() {
-        var ele = $("#players .player")[0]
-        , id = $(ele).data("id")
+    , getTopPlayer = function() {
+        var player
+        , needPosition = function(pos) {
+            return true; // TODO
+        }
         ;
-        // TODO: only get top player in a position we need
-        return id;
+        $.each(playersByVorp(playerEstimates), function(i, p) {
+            if (p.free && needPosition(p.pos)) {
+                player = p;
+                return false;
+            }
+        });
+        return player;
     }
 
     , getTeam = function() {
@@ -104,6 +117,10 @@ window.FantasyDrafter = function(config) {
             teamId = data.id;
             render("team", data, "#team");
             render("drafted", {'players':data.players}, "#drafted");
+            alreadyDrafted = [];
+            $.each(data.players, function(i, p) {
+                alreadyDrafted.push(p.fantasy_position);
+            });
         });
     }
 
@@ -112,8 +129,12 @@ window.FantasyDrafter = function(config) {
             log("Using manual draft information");
             getRoster(config.ROSTER, config.ROSTER_SLOTS);
             draftInfo = {
-                numTeams: config.TEAMS
+                name: "MANUAL DRAFT"
+                , roster: {description: config.ROSTER,
+                           slots: config.ROSTER_SLOTS}
+                , numTeams: config.TEAMS
             };
+            render("draft", {"draft": draftInfo}, "#draft");
             $(window).trigger(GOT_INFO);
             return;
         }
@@ -147,7 +168,6 @@ window.FantasyDrafter = function(config) {
     , refresh = function() {
         getTeam();
         updatePicks();
-        drawPotentials();
     }
 
     , afterDraftInfo = function() {
@@ -161,27 +181,36 @@ window.FantasyDrafter = function(config) {
             new IdMatcher(playerEstimates, config).match();
         }
 
-        drawPotentials();
+        $(window).on(DATA_CHANGE, drawPotentials);
 
+        // Finally, set up any polling or click listening functions
         if (!config.MANUAL) {
             refresh();
-            updatePotentials();
+            setTimeout(updatePlayerAvailability, 10 * 1000);
 
-            setInterval(refresh, 5 * 1000);
+            setInterval(refresh, 10 * 1000);
             setInterval(pickIfActive, 1.5 * 1000);
-            setInterval(updatePotentials, 30 * 1000);
+            setInterval(updatePlayerAvailability, 30 * 1000);
         }
         else {
-            new ManualDraft(config);
+            new ManualDraft(playerEstimates, config);
+            $(window).on(DRAFTED_PLAYER, function(e, pos) {
+                alreadyDrafted.push(pos);
+            });
         }
     }
     ;
 
     return {
-        init: function() {
+        DRAFTED: DRAFTED_PLAYER
+        , UPDATE: DATA_CHANGE
+
+        , init: function() {
             $(window).on(GOT_INFO, afterDraftInfo);
             getDraftInfo();
         }
+
+        , getNext: getTopPlayer
     };
 };
 

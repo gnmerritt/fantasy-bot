@@ -35,6 +35,7 @@ window.IdMatcher = function(playerEstimates, config) {
                        "pos", player.pos].join("/")
         , gotId = function(match) {
             player.id = match.id;
+            $(window).trigger(window.ff.UPDATE);
         }
         , onResults = function(data) {
             // Only got one match back, trust it
