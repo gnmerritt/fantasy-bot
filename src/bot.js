@@ -23,6 +23,7 @@ window.FantasyDrafter = function(config) {
     , alreadyDrafted = []
 
     , playerEstimates = {}
+    , idsToPlayers = {} // map of player id -> player object
 
     , call = makeCall(config) // API interacting function
 
@@ -45,31 +46,29 @@ window.FantasyDrafter = function(config) {
     }
 
     , updatePlayerAvailability = function(callback) {
-        var updated = 0;
-        $.each(playersByVorp(playerEstimates), function(i, player) {
-            if (!player.id || !!player.taken || updated > 50) {
-                return;
-            }
-            updated++;
-            call(["player", player.id, "status"].join("/"), function(data) {
-                if ( !data ) {
-                    return;
-                }
-                if ( data.fantasy_team ) {
+        call("draft", function(data) {
+            var selections = data && data.selections || [];
+            $.each(selections, function(i, s) {
+                var id = s.player.id
+                , player = idsToPlayers[id]
+                ;
+                if (player) {
                     player.taken = true;
                     player.free = false;
                 }
-                else {
-                    player.free = true;
-                }
-                $(window).trigger(DATA_CHANGE);
             });
-        });
+            // anyone not already picked is free
+            forEveryPlayer(playerEstimates, function(p) {
+                if (p.id && !p.taken) {
+                    p.free = true;
+                }
+            });
+            $(window).trigger(DATA_CHANGE);
 
-        // TODO: this will run before all checks are done
-        if ($.isFunction(callback)) {
-            callback();
-        }
+            if ($.isFunction(callback)) {
+                callback();
+            }
+        });
     }
 
     , updatePicks = function() {
@@ -168,6 +167,7 @@ window.FantasyDrafter = function(config) {
     , refresh = function() {
         getTeam();
         updatePicks();
+        updatePlayerAvailability();
     }
 
     , afterDraftInfo = function() {
@@ -175,10 +175,11 @@ window.FantasyDrafter = function(config) {
         playerEstimates = vorp(PLAYER_POINTS // input data
                                , roster.concat(bench) // full roster
                                , draftInfo.numTeams); // # teams
+
         // Stage 2: match players to draft API. The matcher will decorate
         // the existing playerEstimates object for us as it finds matches
         if (!config.MANUAL) {
-            new IdMatcher(playerEstimates, config).match();
+            idsToPlayers = new IdMatcher(playerEstimates, config).match();
         }
 
         $(window).on(DATA_CHANGE, drawPotentials);
@@ -186,11 +187,8 @@ window.FantasyDrafter = function(config) {
         // Finally, set up any polling or click listening functions
         if (!config.MANUAL) {
             refresh();
-            setTimeout(updatePlayerAvailability, 10 * 1000);
-
             setInterval(refresh, 10 * 1000);
             setInterval(pickIfActive, 1.5 * 1000);
-            setInterval(updatePlayerAvailability, 30 * 1000);
         }
         else {
             new ManualDraft(playerEstimates, config);
@@ -209,8 +207,6 @@ window.FantasyDrafter = function(config) {
             $(window).on(GOT_INFO, afterDraftInfo);
             getDraftInfo();
         }
-
-        , getNext: getTopPlayer
     };
 };
 

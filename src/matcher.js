@@ -1,5 +1,6 @@
 /**
- * Decorates player objects with a draft API id
+ * Decorates player objects with a draft API id, returns a map
+ * of player id -> player object
  */
 (function(document, window, undefined) {
  'use strict';
@@ -11,6 +12,8 @@ window.IdMatcher = function(playerEstimates, config) {
 
     , searchesPastMinute = 0
     , pendingSearches = []
+
+    , idsToPlayers = {}
 
     , runPending = function() {
         var searchFunc
@@ -35,6 +38,7 @@ window.IdMatcher = function(playerEstimates, config) {
                        "pos", player.pos].join("/")
         , gotId = function(match) {
             player.id = match.id;
+            idsToPlayers[player.id] = player;
             $(window).trigger(window.ff.UPDATE);
         }
         , onResults = function(data) {
@@ -76,6 +80,7 @@ window.IdMatcher = function(playerEstimates, config) {
             $.each(playersByVorp(playerEstimates), function(i, p) {
                 queueSearch(p);
             });
+            return idsToPlayers;
         }
     }
 };

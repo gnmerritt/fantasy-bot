@@ -35,9 +35,8 @@ window.ManualDraft = function(playerEstimates, config) {
         }
         , draftPlayer = function() {
             addRow($("#drafted table"), playerRow);
-            $(window).trigger(CLOSE_POPUP);
             $(window).trigger(window.ff.DRAFTED, playerRow.data("pos"));
-            playerRow.remove();
+            removePlayer();
         }
         ;
         $(window).trigger(CLOSE_POPUP);
@@ -65,7 +64,7 @@ window.ManualDraft = function(playerEstimates, config) {
     //
     // Set up the manual drafting page & handlers
     //
-    // mark all players as free, since this is a manual draft
+    // Mark all players as free since this is a manual draft
     forEveryPlayer(playerEstimates, function(p) {
         p.free = true;
     });
