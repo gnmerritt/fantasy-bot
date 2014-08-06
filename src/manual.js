@@ -17,13 +17,18 @@ window.ManualDraft = function(playerEstimates, config) {
         addRow($("#drafted table"), $(".potential .head"));
     }
 
+    , tweakPlayers = function() {
+        $(".potential").addClass("showAll");
+        $(".potential tr").removeClass("free");
+    }
+
     , showButtons = function( event ) {
         var playerRow = $(event.target).closest("tr")
         , offset = playerRow.offset()
         , css = {
             display: "block"
             , left: event.clientX + 'px'
-            , top: event.clientY + 'px'
+            , top: event.clientY + $(window).scrollTop() + 'px'
         }
         , closeFunc = function() {
             $("#manualPopup").removeAttr("style");
@@ -69,9 +74,14 @@ window.ManualDraft = function(playerEstimates, config) {
         p.free = true;
     });
     $(window).trigger(window.ff.UPDATE);
+    setTimeout(tweakPlayers, 500);
 
     setupDrafted();
     attachHandlers();
+
+    window.onbeforeunload = function() {
+        return 'Warning: reloading will lose draft progress';
+    }
 };
 
 })(document, window);
