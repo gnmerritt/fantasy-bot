@@ -6,7 +6,7 @@
  'use strict';
 
 window.IdMatcher = function(playerEstimates, config) {
-    var SEARCH_LIMIT = 60 // searches allowed per minute
+    var SEARCH_LIMIT = 100 // searches allowed per minute
 
     , call = makeCall(config)
 
@@ -78,7 +78,8 @@ window.IdMatcher = function(playerEstimates, config) {
                 queueSearch(p);
             });
             // Try to run pending searches
-            setInterval(runPending, 1000);
+            setInterval(runPending, 10 * 1000);
+            runPending();
             return idsToPlayers;
         }
     }

@@ -115,12 +115,12 @@ window.FantasyDrafter = function(config) {
             }
         });
         if (flexIndexOf(neededRoster, pos) > -1) {
-            log("Still need " + pos + " on roster");
+            //log("Still need " + pos + " on roster");
             return true;
         }
         else if (alreadyDrafted.length >= neededRoster.length &&
                  flexIndexOf(neededBench, pos) > -1) {
-            log("Need " + pos + " to fill out bench ");
+            //log("Need " + pos + " to fill out bench ");
             return true;
         }
         return false;
