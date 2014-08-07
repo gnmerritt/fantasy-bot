@@ -29,12 +29,14 @@
  .right { float:right; }
 
  .potential tr:nth-child(n + 40) { display:none; }
+ .potential.showAll tr { display:table-row; }
  .potential tr { -webkit-transition: all 2s ease; }
+
+ .potential .free { background-color:#00FF00; }
 
  .active { background-color:yellow; font-weight:bold; }
  .hasId { background-color:yellow; }
-
- .potential .free { background-color:#00FF00; }
+ .best { background-color:red !important; }
 
  .config * { display:inline-block; }
  #configs { margin-left:50px; }

@@ -14,6 +14,7 @@ window.FantasyDrafter = function(config) {
     , GOT_INFO = "gotDraftInfo"
     , DATA_CHANGE = "dataChange"
     , DRAFTED_PLAYER = "drafted"
+    , HIGHLIGHT_BEST = "highlightBest"
 
     // info about the draft
     , teamId
@@ -43,6 +44,7 @@ window.FantasyDrafter = function(config) {
         render("potentials", {
             'players': playersByVorp(playerEstimates)
         }, "#players");
+        highlightBest();
     }
 
     , updatePlayerAvailability = function(callback) {
@@ -96,11 +98,68 @@ window.FantasyDrafter = function(config) {
         }
     }
 
+    , needPosition = function(pos) {
+        var ownedPositions = alreadyDrafted.slice(0)
+        , neededRoster = roster.slice(0)
+        , neededBench = bench.slice(0)
+        ;
+        $.each(ownedPositions, function(i, pos) {
+            var rosterIndex = flexIndexOf(neededRoster, pos)
+            , benchIndex = flexIndexOf(neededBench, pos)
+            ;
+            if (rosterIndex > -1) {
+                neededRoster[rosterIndex] = null;
+            }
+            else if (benchIndex > -1) {
+                neededBench[benchIndex] = null;
+            }
+        });
+        if (flexIndexOf(neededRoster, pos) > -1) {
+            log("Still need " + pos + " on roster");
+            return true;
+        }
+        else if (alreadyDrafted.length >= neededRoster.length &&
+                 flexIndexOf(neededBench, pos) > -1) {
+            log("Need " + pos + " to fill out bench ");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Fuzzy matching replacement for indexOf that knows about flex
+     * positions and bench positions
+     */
+    , flexIndexOf = function(array, pos) {
+        var flexMatch = -1
+        , benchMatch = -1
+        , i
+        ;
+        for (i = 0; i < array.length; i++) {
+            if (array[i] == null) {
+                // no-op
+            }
+            // Real match, return
+            else if (array[i] === pos) {
+                return i;
+            }
+            // Flex position match ie 'WR' matches WR/RB
+            else if (array[i].indexOf(pos) > -1) {
+                flexMatch = i;
+            }
+            // Lowest priority: bench slot
+            else if (array[i] === BENCH && flexMatch === -1) {
+                benchMatch = i;
+            }
+        }
+        return Math.max(flexMatch, benchMatch);
+    }
+
+    /**
+     * Returns the next player the bot will draft
+     */
     , getTopPlayer = function() {
         var player
-        , needPosition = function(pos) {
-            return true; // TODO
-        }
         ;
         $.each(playersByVorp(playerEstimates), function(i, p) {
             if (p.free && needPosition(p.pos)) {
@@ -109,6 +168,21 @@ window.FantasyDrafter = function(config) {
             }
         });
         return player;
+    }
+
+    , highlightBest = function() {
+        var bestPlayer = getTopPlayer() || {}
+        , playerName = bestPlayer.first_name + " " + bestPlayer.last_name
+        , matchingName
+        ;
+        $.each($(".potential tr .n"), function(i, n) {
+            if ($(n).html() === playerName) {
+                matchingName = n;
+                return false;
+            }
+        });
+        $(".potentials tr").removeClass("best");
+        $(matchingName).closest("tr").addClass("best");
     }
 
     , getTeam = function() {
@@ -183,6 +257,7 @@ window.FantasyDrafter = function(config) {
         }
 
         $(window).on(DATA_CHANGE, drawPotentials);
+        $(window).on(HIGHLIGHT_BEST, highlightBest);
 
         // Finally, set up any polling or click listening functions
         if (!config.MANUAL) {
@@ -202,6 +277,7 @@ window.FantasyDrafter = function(config) {
     return {
         DRAFTED: DRAFTED_PLAYER
         , UPDATE: DATA_CHANGE
+        , NEW_REC: HIGHLIGHT_BEST
 
         , init: function() {
             $(window).on(GOT_INFO, afterDraftInfo);

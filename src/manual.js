@@ -22,6 +22,17 @@ window.ManualDraft = function(playerEstimates, config) {
         $(".potential tr").removeClass("free");
     }
 
+    , findByName = function(rowName) {
+        var match;
+        forEveryPlayer(playerEstimates, function(p) {
+            var name = p.first_name + " " + p.last_name;
+            if (name === rowName) {
+                match = p;
+            }
+        });
+        return match;
+    }
+
     , showButtons = function( event ) {
         var playerRow = $(event.target).closest("tr")
         , offset = playerRow.offset()
@@ -35,8 +46,11 @@ window.ManualDraft = function(playerEstimates, config) {
             playerRow.removeClass("hasId");
         }
         , removePlayer = function() {
-            $(window).trigger(CLOSE_POPUP);
+            var player = findByName(playerRow.find(".n").html());
+            player.free = false;
             playerRow.remove();
+            $(window).trigger(CLOSE_POPUP);
+            $(window).trigger(window.ff.NEW_REC);
         }
         , draftPlayer = function() {
             addRow($("#drafted table"), playerRow);

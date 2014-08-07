@@ -71,15 +71,14 @@ window.IdMatcher = function(playerEstimates, config) {
     }
     ;
 
-    // Try to run pending searches
-    setInterval(runPending, 1000);
-
     return {
         match: function() {
             log("Starting player matching");
             $.each(playersByVorp(playerEstimates), function(i, p) {
                 queueSearch(p);
             });
+            // Try to run pending searches
+            setInterval(runPending, 1000);
             return idsToPlayers;
         }
     }
