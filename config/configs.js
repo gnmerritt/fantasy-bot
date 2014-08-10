@@ -14,7 +14,7 @@ CONFIG["PROD-2013"] = {
 CONFIG["YAHOO-MOCK"] = {
     KEY: "", HOST: "", PREFIX: ""
     , MANUAL: true
-    , ROSTER: "QB, RB, RB, WR, WR, WR, TE, RB/WR/TE, K, DST, BN, BN, BN, BN, BN"
+    , ROSTER: "QB, RB, RB, WR, WR, WR, TE, K, DST, BN, BN, BN, BN, BN, BN"
     , ROSTER_SLOTS: 15
     , TEAMS: 10
 };
