@@ -98,11 +98,23 @@ window.FantasyDrafter = function(config) {
         }
     }
 
+    /**
+     * Function to determine whether or not we need to draft another player
+     * at a position. Looks through the list of already drafted positions and
+     * compares against the required roster.
+     *
+     * Flex (RB/WR) and bench (BN) aware via a special array search function.
+     */
     , needPosition = function(pos) {
         var ownedPositions = alreadyDrafted.slice(0)
         , neededRoster = roster.slice(0)
         , neededBench = bench.slice(0)
         ;
+        // Special case: never draft a backup kicker.
+        if (pos === "K" && ownedPositions.indexOf("K") > -1) {
+            //log("No backup kickers");
+            return false;
+        }
         $.each(ownedPositions, function(i, pos) {
             var rosterIndex = flexIndexOf(neededRoster, pos)
             , benchIndex = flexIndexOf(neededBench, pos)
@@ -123,6 +135,7 @@ window.FantasyDrafter = function(config) {
             //log("Need " + pos + " to fill out bench ");
             return true;
         }
+        //log("Don't need any of " + pos);
         return false;
     }
 
