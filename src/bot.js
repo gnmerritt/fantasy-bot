@@ -22,6 +22,7 @@ window.FantasyDrafter = function(config) {
     , roster = []
     , bench = []
     , alreadyDrafted = []
+    , myPicks = []
 
     , playerEstimates = {}
     , idsToPlayers = {} // map of player id -> player object
@@ -33,9 +34,15 @@ window.FantasyDrafter = function(config) {
         ;
         log("trying to draft: " + player.first_name + " " + player.last_name);
         call(pickUrl, function(data) {
-            log("drafted player, got msg back: "+ data.message);
-            if (data.code !== 200) {
+            log("drafted player, got msg back: "+ data.message
+                + " (" + data.code + ")");
+            // player already picked, try again
+            if (data.code === 410) {
                 pickIfActive();
+            }
+            // success!
+            else if (data.code == 200) {
+                refresh();
             }
         });
     }
@@ -77,25 +84,31 @@ window.FantasyDrafter = function(config) {
         call("picks", function(data) {
             var myTeam = function(ele) {
                 return ele.team.id == teamId;
-            }
-            , mine = data.picks.filter(myTeam)
-            ;
-            render("pickList", {'mine':mine}, "#picks");
+            };
+            myPicks = data.picks.filter(myTeam)
+            render("pickList", {'mine': myPicks}, "#picks");
         });
     }
 
     , pickIfActive = function() {
-        var  picks = $('#picks')
-        , active = picks.find('.active')
-        , player
-        ;
-        if ( active.length ) {
+        var pickFunc = function() {
             log("Active! Picking...");
             updatePlayerAvailability(function() {
-                player = getTopPlayer();
-                pick(player);
+                var player = getTopPlayer();
+                if (player) {
+                    pick(player);
+                }
             });
         }
+        $.each(myPicks, function(i, pick) {
+            var starts = pick.starts.utc
+            , ends = pick.expires.utc
+            , now = now_utc()
+            ;
+            if (starts <= now && now <= ends) {
+                pickFunc();
+            }
+        });
     }
 
     /**
@@ -173,9 +186,13 @@ window.FantasyDrafter = function(config) {
      */
     , getTopPlayer = function() {
         var player
+        , neededPositions = {}
         ;
         $.each(playersByVorp(playerEstimates), function(i, p) {
-            if (p.free && needPosition(p.pos)) {
+            if (typeof(neededPositions[p.pos]) === "undefined") {
+                neededPositions[p.pos] = needPosition(p.pos);
+            }
+            if (p.free && neededPositions[p.pos]) {
                 player = p;
                 return false;
             }
@@ -276,7 +293,7 @@ window.FantasyDrafter = function(config) {
         if (!config.MANUAL) {
             refresh();
             setInterval(refresh, 10 * 1000);
-            setInterval(pickIfActive, 1.5 * 1000);
+            setInterval(pickIfActive, 2.0 * 1000);
         }
         else {
             new ManualDraft(playerEstimates, config);

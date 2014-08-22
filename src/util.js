@@ -109,4 +109,8 @@ window.makeCall = function(config) {
             success: callback
         });
     }
-}
+};
+
+window.now_utc = function() {
+    return Math.floor((new Date()).getTime() / 1000);
+};
