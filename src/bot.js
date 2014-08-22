@@ -292,8 +292,8 @@ window.FantasyDrafter = function(config) {
         // Finally, set up any polling or click listening functions
         if (!config.MANUAL) {
             refresh();
-            setInterval(refresh, 10 * 1000);
-            setInterval(pickIfActive, 2.0 * 1000);
+            setInterval(refresh, 15 * 1000);
+            setInterval(pickIfActive, 2 * 1000);
         }
         else {
             new ManualDraft(playerEstimates, config);

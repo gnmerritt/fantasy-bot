@@ -21,7 +21,7 @@ window.IdMatcher = function(playerEstimates, config) {
         ;
         while (searchesPastMinute < SEARCH_LIMIT) {
             // arbitrary throttling
-            if (ranNow > 30) {
+            if (ranNow > 10) {
                 return;
             }
             searchFunc = pendingSearches.shift();
