@@ -69,7 +69,7 @@ window.ManualDraft = function(playerEstimates, config) {
             // attach handlers
             $("#manualPopup .draft").one("click", draftPlayer);
             $("#manualPopup .remove").one("click", removePlayer);
-            $("#manualPopup .close").one("click", function() {
+            $("#manualPopup .dismiss").one("click", function() {
                 $(window).trigger(CLOSE_POPUP);
             });
         });
