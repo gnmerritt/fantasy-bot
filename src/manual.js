@@ -13,7 +13,7 @@ window.ManualDraft = function(playerEstimates, config) {
     }
 
     , setupDrafted = function() {
-        $("#drafted").append("<table></table");
+        $("#drafted").append("<table class='table table-rounded table-striped table-bordered'></table");
         addRow($("#drafted table"), $(".potential .head"));
     }
 
