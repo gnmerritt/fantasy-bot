@@ -136,7 +136,7 @@ window.FantasyDrafter = function(config) {
                 return false;
             }
         });
-        $(".potentials tr").removeClass("best");
+        $(".potential tr").removeClass("best");
         $(matchingName).closest("tr").addClass("best");
     }
 
