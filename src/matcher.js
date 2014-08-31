@@ -6,29 +6,28 @@
  'use strict';
 
 window.IdMatcher = function(playerEstimates, config) {
-    var SEARCH_LIMIT = 100 // searches allowed per minute
+    var SEARCH_LIMIT = 150 // searches allowed per minute
 
     , call = makeCall(config)
 
     , searchesPastMinute = 0
     , pendingSearches = []
+    , searchRunnerInterval
 
     , idsToPlayers = {}
 
     , runPending = function() {
-        var searchFunc
-        , ranNow = 0
-        ;
-        while (searchesPastMinute < SEARCH_LIMIT) {
-            // arbitrary throttling
-            if (ranNow > 15) {
-                return;
-            }
-            searchFunc = pendingSearches.shift();
+        for (var ranNow = 0;
+             pendingSearches && searchesPastMinute < SEARCH_LIMIT && ranNow < 30;
+             ranNow++) {
+            var searchFunc = pendingSearches.shift();
             if ($.isFunction(searchFunc)) {
                 searchFunc();
-                ranNow++;
             }
+        }
+        if (!pendingSearches) {
+            log("Finished matching players");
+            clearInterval(searchRunnerInterval);
         }
     }
 
@@ -78,7 +77,7 @@ window.IdMatcher = function(playerEstimates, config) {
                 queueSearch(p);
             });
             // Try to run pending searches
-            setInterval(runPending, 10 * 1000);
+            searchRunnerInterval = setInterval(runPending, 5 * 1000);
             runPending();
             return idsToPlayers;
         }
