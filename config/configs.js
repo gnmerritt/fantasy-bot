@@ -18,3 +18,11 @@ CONFIG["YAHOO-MOCK"] = {
     , ROSTER_SLOTS: 15
     , TEAMS: 10
 };
+
+CONFIG["CLOWN"] = {
+    KEY: "", HOST: "", PREFIX: ""
+    , MANUAL: true
+    , ROSTER: "QB, RB, RB, WR, WR, TE, WR/RB, K, DST, BN, BN, BN, BN"
+    , ROSTER_SLOTS: 13
+    , TEAMS: 12
+};
