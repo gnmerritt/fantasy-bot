@@ -13,11 +13,12 @@
 
 window.vorp = function(pointEstimates, draftRoster, numTeams) {
     var POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
+    , REPLACEMENT_RANGE = 3
 
     /**
      * Calculates replacement value by estimating demand for each
-     * position, and then averaging the projected value of the next
-     * 10% of available players at the position
+     * position, and then averaging the projected value of the
+     * next three available players at the position
      */
     , getReplacementValue = function(position, inputEstimates) {
         var teamDemand = getTeamDemand(position)
@@ -26,13 +27,13 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
         , players = inputEstimates[position] || []
         , replacementStart = Math.min(Math.ceil(totalDemand),
                                       players.length - 1)
-        , replacementRange = players.length * 0.1
-        , replacementStop = replacementStart + replacementRange
+        , replacementStop = replacementStart + REPLACEMENT_RANGE
         , replacementPlayers = players.slice(replacementStart, replacementStop)
 
         , replacementValue = averagePoints(replacementPlayers)
         ;
-        return replacementValue;
+        log(position + " replacement range " + replacementStart + " - " + replacementStop);
+        return replacementValue.toFixed(2);
     }
 
     /**
@@ -87,11 +88,11 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
     , replacementValues = calculateReplacementValues(inputEstimates)
     ;
 
-    console.log("running VORP for " + numTeams + " teams, roster: " + draftRoster);
-    console.log("replacementValues: " + JSON.stringify(replacementValues));
+    log("running VORP for " + numTeams + " teams, roster: " + draftRoster);
+    log("replacementValues: " + JSON.stringify(replacementValues));
 
     forEveryPlayer(inputEstimates, function(player, pos_rank) {
-        player.vorp = (player.points - replacementValues[player.pos]).toFixed(2);
+        player.vorp = player.points - replacementValues[player.pos];
         player.pos_rank = pos_rank + 1;
     });
 
