@@ -3,90 +3,75 @@
  *
  * Data & config variables should be included on the page
  */
-ff = function(document, window, undefined) {
-    var urlPrefix = ["http://", HOST, PREFIX].join("")
-    , base = dust.makeBase({
-        KEY: KEY
-        , HOST: HOST
-    })
+(function(document, window, undefined) {
+ 'use strict';
+
+window.FantasyDrafter = function(config) {
+    // events
+    var GOT_INFO = "gotDraftInfo"
+    , DATA_CHANGE = "dataChange"
+    , DRAFTED_PLAYER = "drafted"
+    , HIGHLIGHT_BEST = "highlightBest"
+
+    // info about the draft
     , teamId
-    , foundPlayers
+    , draftInfo
+    , roster // Roster manager
+    , myPicks = []
 
-    , withKey = function( url ) {
-        return url + "?key=" + KEY;
-    }
+    , playerEstimates = {}
+    , idsToPlayers = {} // map of player id -> player object
 
-    , call = function( method, callback, type ) {
-        var url = withKey( urlPrefix + method )
-        , verb = type || "GET"
+    , call = makeCall(config) // API interacting function
+
+    , pick = function( player ) {
+        var pickUrl = ["pick_player", player.id].join("/")
         ;
-        $.ajax({
-            type: verb,
-            url: url,
-            crossDomain: true,
-            contentType: "application/json; charset=utf-8",
-            dataType: "jsonp",
-            success: callback
-        });
-    }
-
-    , pick = function( playerid ) {
-        var pickUrl = ["pick_player", playerid].join("/")
-        ;
+        log("trying to draft: " + player.first_name + " " + player.last_name);
         call(pickUrl, function(data) {
-            console.log("drafted player, got msg back: "+ data.message);
-        });
-    }
-
-    , render = function(name, data, selector) {
-        dust.render(name, base.push(data), function(err, out) {
-            $(selector).html(out);
+            log("drafted player, got msg back: "+ data.message
+                + " (" + data.code + ")");
+            // player already picked, try again
+            if (data.code === 410) {
+                pickIfActive();
+            }
+            // success!
+            else if (data.code == 200) {
+                refresh();
+            }
         });
     }
 
     , drawPotentials = function() {
-        var potentials = []
-        ;
-        $.each(PLAYER_RANKINGS, function(i, p) {
-            var json = {
-                'rank':p[0],
-                'first_name':p[1],
-                'last_name':p[2],
-                'team':p[3],
-                'fantasy_position':p[4],
-                'pos_rank':p[5],
-                'id':p[6]
-            };
-            addApiLink( json );
-            potentials.push(json);
-        });
-        render("potentials", {'players':potentials}, "#players");
+        render("potentials", {
+            'players': playersByVorp(playerEstimates)
+        }, "#players");
+        highlightBest();
     }
 
-    , updatePotentials = function() {
-        var checkPlayer = function(i, ele )  {
-            var id = $(ele).data("id")
-            url = ["player", id, "status"].join("/")
-            ;
-            call(url, function(data) {
-                if ( data && data.fantasy_team ) {
-                    $(ele).remove();
-                }
-                else {
-                    $(ele).addClass("free");
+    , updatePlayerAvailability = function(callback) {
+        call("draft", function(data) {
+            var selections = data && data.selections || [];
+            $.each(selections, function(i, s) {
+                var id = s.player.id
+                , player = idsToPlayers[id]
+                ;
+                if (player) {
+                    player.taken = true;
+                    player.free = false;
                 }
             });
-        }
-        ;
-        console.log("Updating potential players");
+            // anyone not already picked is free
+            forEveryPlayer(playerEstimates, function(p) {
+                if (p.id && !p.taken) {
+                    p.free = true;
+                }
+            });
+            $(window).trigger(DATA_CHANGE);
 
-        $(".potential tr").not(".head").filter(":visible").each(checkPlayer);
-
-        // make sure that there's one available player of each type, so
-        // we don't skip picks
-        $.each(ROSTER, function(_, pos) {
-            var ele = $(".potential tr").filter("[data-pos="+pos+"]")[0]
-            checkPlayer(0, ele);
+            if ($.isFunction(callback)) {
+                callback();
+            }
         });
     }
 
@@ -94,142 +79,148 @@ ff = function(document, window, undefined) {
         call("picks", function(data) {
             var myTeam = function(ele) {
                 return ele.team.id == teamId;
-            }
-            , mine = data.picks.filter(myTeam)
-            ;
-            render("pickList", {'mine':mine}, "#picks");
+            };
+            myPicks = data.picks.filter(myTeam)
+            render("pickList", {'mine': myPicks}, "#picks");
         });
     }
 
     , pickIfActive = function() {
-        var  picks = $('#picks')
-        , active = picks.find('.active')
-        , my_pick_index = 0
-        , position
-        ;
-        if ( active.length ) {
-            console.log("Active! Picking...");
-            updatePotentials();
-            picks.find("li").each(function(i, ele) {
-                if ( $(ele).is(active) ) {
-                    my_pick_index = i + 1;
+        var pickFunc = function() {
+            log("Active! Picking...");
+            updatePlayerAvailability(function() {
+                var player = getTopPlayer();
+                if (player) {
+                    pick(player);
                 }
             });
-            if (my_pick_index > 0) {
-                position = ROSTER[my_pick_index];
-                pick(getTopPlayerId(position));
+        }
+        $.each(myPicks, function(i, pick) {
+            var starts = pick.starts.utc
+            , ends = pick.expires.utc
+            , now = now_utc()
+            ;
+            if (starts <= now && now <= ends) {
+                pickFunc();
             }
-        }
-        else {
-            console.log("Not my pick");
-        }
+        });
     }
 
-    , getTopPlayerId = function(pos) {
-        var ele = $("#players .free").filter("[data-pos="+pos+"]")[0]
-        , id = $(ele).data("id");
-        console.log("trying to draft: " + $(ele).find(".n").html());
-        return id;
+    /**
+     * Returns the next player the bot will draft
+     */
+    , getTopPlayer = function() {
+        var player
+        , neededPositions = {}
+        ;
+        $.each(playersByVorp(playerEstimates), function(i, p) {
+            if (typeof(neededPositions[p.pos]) === "undefined") {
+                neededPositions[p.pos] = roster.needPosition(p.pos);
+            }
+            if (p.free && neededPositions[p.pos]) {
+                player = p;
+                return false;
+            }
+        });
+        return player;
+    }
+
+    , highlightBest = function() {
+        var bestPlayer = getTopPlayer() || {}
+        , playerName = bestPlayer.first_name + " " + bestPlayer.last_name
+        , matchingName
+        ;
+        $.each($(".potential tr .n"), function(i, n) {
+            if ($(n).html() === playerName) {
+                matchingName = n;
+                return false;
+            }
+        });
+        $(".potential tr").removeClass("best");
+        $(matchingName).closest("tr").addClass("best");
     }
 
     , getTeam = function() {
         call("team", function(data) {
             teamId = data.id;
             render("team", data, "#team");
-            addApiLinkToPlayers(data.players);
             render("drafted", {'players':data.players}, "#drafted");
+            roster.resetDrafted();
+            $.each(data.players, function(i, p) {
+                roster.draftedPosition(p.fantasy_position);
+            });
         });
     }
 
-    , playerSearch = function() {
-        foundPlayers = 0;
-        $("#found").html('');
-        $.each(PLAYER_RANKINGS, function(i, player) {
-            search(player);
-        });
-    }
-
-    , search = function( player_list ) {
-        var first_name = player_list[1].toLowerCase()
-        , last_name = player_list[2]
-        , position = player_list[4]
-        , searchUrl = ["search",
-                       "name", last_name,
-                       "pos", position].join("/")
-        , gotId = function(match) {
-            if ( player_list.length == 7) {
-                player_list.pop(); // remove the old id
-            }
-            player_list.push(match.id);
-            $("#found").append('<div>' + player_list + '</div>');
-            $(".found").html(++foundPlayers);
+    , getDraftInfo = function() {
+        if (config.MANUAL) {
+            log("Using manual draft information");
+            roster = new Roster(config.ROSTER, config.ROSTER_SLOTS);
+            draftInfo = {
+                name: "MANUAL DRAFT"
+                , roster: {description: config.ROSTER,
+                           slots: config.ROSTER_SLOTS}
+                , numTeams: config.TEAMS
+            };
+            render("draft", {"draft": draftInfo}, "#draft");
+            $(window).trigger(GOT_INFO);
+            return;
         }
-        ;
-        call(searchUrl, function(data) {
-            // Only got one match back, trust it
-            if ( data.results && data.results.length == 1 ) {
-                gotId(data.results[0]);
-            }
-            else if ( data.results ) { // Look a little harder
-                $.each(data.results, function(i, result) {
-                    var resultName = result.first_name.toLowerCase();
-                    if ( resultName.indexOf(first_name) > -1 ) {
-                        gotId(result);
-                    }
-                });
-            }
+        call("draft", function(data) {
+            render("draft", {"draft": data}, "#draft");
+            roster = new Roster(data.roster.description, data.roster.slots);
+            draftInfo = data;
+            draftInfo.numTeams = draftInfo.teams.length;
+            $(window).trigger(GOT_INFO);
         });
-    }
-
-    , addApiLinkToPlayers = function( players ) {
-        $.each(players, function(i, ele) {
-            addApiLink( ele );
-        });
-    }
-
-    , addApiLink = function( player ) {
-        player.url = withKey( urlPrefix + "player/" + player.id + "/status" );
-    }
-
-    , drawRoster = function() {
-        var roster_list = []
-        ;
-        $.each(ROSTER, function(i, s) {
-            roster_list.push({'name':s});
-        });
-        render("roster", {'slots':roster_list}, "#roster");
     }
 
     , refresh = function() {
-        console.log("Refreshing...");
         getTeam();
         updatePicks();
-        setTimeout(refresh, 10000);
-        setTimeout(pickIfActive, 1500);
+        updatePlayerAvailability();
+    }
+
+    , afterDraftInfo = function() {
+        // Stage 1: calculate vorp for players
+        playerEstimates = vorp(PLAYER_POINTS // input data
+                               , roster.fullRoster() // full roster
+                               , draftInfo.numTeams); // # teams
+
+        // Stage 2: match players to draft API. The matcher will decorate
+        // the existing playerEstimates object for us as it finds matches
+        if (!config.MANUAL) {
+            idsToPlayers = new IdMatcher(playerEstimates, config).match();
+        }
+
+        $(window).on(DATA_CHANGE, drawPotentials);
+        $(window).on(HIGHLIGHT_BEST, highlightBest);
+
+        // Finally, set up any polling or click listening functions
+        if (!config.MANUAL) {
+            refresh();
+            setInterval(refresh, 15 * 1000);
+            setInterval(pickIfActive, 2 * 1000);
+        }
+        else {
+            new ManualDraft(playerEstimates, config);
+            $(window).on(DRAFTED_PLAYER, function(e, pos) {
+                roster.draftedPosition(pos);
+            });
+        }
     }
     ;
 
     return {
-        init: function() {
-            drawRoster();
-            drawPotentials();
-            refresh();
-            $("#playerSearch").on("click", playerSearch);
+        DRAFTED: DRAFTED_PLAYER
+        , UPDATE: DATA_CHANGE
+        , NEW_REC: HIGHLIGHT_BEST
 
-            // kick off a couple updates in case one doesn't finish
-            updatePotentials();
-            setTimeout(updatePotentials, 2000);
-            setTimeout(updatePotentials, 4000);
-            // and update once every 30 seconds
-            setInterval(updatePotentials, 30000);
-        }
-
-        , updatePicked: function() {
-            updatePotentials();
-        }
-
-        , pick: function() {
-            pickIfActive();
+        , init: function() {
+            $(window).on(GOT_INFO, afterDraftInfo);
+            getDraftInfo();
         }
     };
-}(document, window, undefined);
+};
+
+})(document, window);

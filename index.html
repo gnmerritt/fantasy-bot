@@ -2,77 +2,94 @@
 <html>
 <head>
 <title>Nathan's FF Draft Bot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <!-- utilities -->
+<link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css" />
 <script src="lib/jquery-2.0.3.min.js"></script>
 <script src="lib/dust-full.min.js"></script>
 <script src="lib/dust-helpers.min.js"></script>
+<script src="lib/bootstrap.min.js"></script>
 
-<!-- configuration files and pre-calc'd data -->
-<script src="data.js"></script>
-<script src="config-debug.js"></script>
-<script src="config-prod.js"></script>
-<script src="config-prod-2014.js"></script>
-
+<!-- bot code -->
+<script src="src/config.js"></script>
 <script src="src/bot.js"></script>
+<script src="src/roster.js"></script>
+<script src="src/vorp.js"></script>
+<script src="src/matcher.js"></script>
+<script src="src/manual.js"></script>
+<script src="src/util.js"></script>
 <script src="src/ui.js"></script>
+
+<!-- pre-calc'd data -->
+<script src="data/latest.js"></script>
+<script src="data/dst_latest.js"></script>
+
+<!-- configuration files -->
+<script src="config/configs.js"></script>
+
 <style type="text/css">
- .pane { width:45%; }
- .left { float:left; }
- .right { float:right; }
+ .potential tr:nth-child(n + 45) { display:none; }
+ .potential.showAll tr { display:table-row; }
+ .potential tr { -webkit-transition: all 2s ease; }
+
+ .potential .free { background-color:#00FF00; }
+
  .active { background-color:yellow; font-weight:bold; }
- .free { background-color:#00FF00; display:table-row !important; }
- .taken { background-color:red; }
+ .hasId { background-color:yellow; }
+ .best { background-color:red !important; }
+
+ .config * { display:inline-block; }
+ #configs { margin-left:50px; }
 
  #roster { overflow:hidden; margin-left:-40px; }
  #roster li { float:left; padding:5px; list-style-type:none; }
 
- .potential tr:nth-child(n + 25) { display:none; }
- .button { padding:15px; background-color:grey; border:1px solid black; }
-
-  table { margin:20px 0; border:1px solid #333; }
-  td, th { padding:5px; border-right:1px solid #333; border-bottom:1px solid #333; }
-  td:last-child, th:last-child { border-right-width:0; }
-  tr:last-child td { border-bottom-width:0; }
+  #manualPopup { position:absolute; font-size:18px; display:none; background-color:#404040; z-index:100; border-radius:5px; }
+  #manualPopup .btn { margin:5px }
 </style>
 </head>
 <body>
 
 <script type="text/javascript">
   $(document).ready(function() {
-    ff.init();
+      config.init();
   });
 </script>
 
-<div class="left pane">
+<div class="container-fluid">
+<div class="row-fluid">
+
+<div class="span6">
+
+<div class="config">
+  <h3>Config:</h3>
+  <select id="configs"></select>
+</div>
+
+<h3>Draft</h3>
+<div id="draft"></div>
 
 <h3>My Team</h3>
-
 <div id="team"></div>
 
 <h3>Drafted</h3>
-
 <div id="drafted"></div>
 
 <h3>My Picks</h3>
-
 <div id="picks"></div>
 
-<h3>Player search</h3>
-<div id="playerSearch" class="button">Rerun (found <span class="found">0</span>)</div>
-<div id="found"></div>
+</div> <!-- end of left pane -->
 
-</div>
+<div class="span6">
 
-<div class="right pane">
-
-<h3>Draft Order</h3>
-
-<div id="roster"></div>
-
-<h3>To draft</h3>
-
+<h3>Draft board</h3>
+<div id="manualPopup"></div>
 <div id="players"></div>
 
+</div> <!-- end of right pane -->
+
+</div>
 </div>
 
 </body>

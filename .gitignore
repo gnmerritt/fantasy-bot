@@ -1,2 +1,5 @@
 *csv*
 *.ods
+*pyc
+data/*
+venv/*
