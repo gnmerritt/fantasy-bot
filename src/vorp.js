@@ -92,7 +92,7 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
     log("replacementValues: " + JSON.stringify(replacementValues));
 
     forEveryPlayer(inputEstimates, function(player, pos_rank) {
-        player.vorp = player.points - replacementValues[player.pos];
+        player.vorp = (player.points - replacementValues[player.pos]).toFixed(2);
         player.pos_rank = pos_rank + 1;
     });
 
