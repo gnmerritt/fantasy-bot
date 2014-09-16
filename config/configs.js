@@ -5,14 +5,20 @@ CONFIG["DEBUG"] = {
     , PREFIX: "/api/v1/"
 };
 
-CONFIG["PROD-2013"] = {
+CONFIG["AUTOBOTS-2013"] = {
     KEY: "8891a052-7d14-48db-9c2c-c0a59f87e927"
     , HOST: "draft.gnmerritt.net"
     , PREFIX: "/api/v1/"
 };
 
-CONFIG["PROD-2014"] = {
+CONFIG["AUTOBOTS-2014"] = {
     KEY: "36164d39-014c-484f-b9f7-70fa07bcf6e4"
+    , HOST: "draft.gnmerritt.net"
+    , PREFIX: "/api/v1/"
+};
+
+CONFIG["FORGET-2014"] = {
+    KEY: "70041038-ecb3-459d-b388-2df91a1e8057"
     , HOST: "draft.gnmerritt.net"
     , PREFIX: "/api/v1/"
 };
