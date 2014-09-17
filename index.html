@@ -15,6 +15,7 @@
 <!-- bot code -->
 <script src="src/config.js"></script>
 <script src="src/bot.js"></script>
+<script src="src/scoring.js"></script>
 <script src="src/roster.js"></script>
 <script src="src/vorp.js"></script>
 <script src="src/matcher.js"></script>
@@ -28,7 +29,7 @@
 
 <!-- configuration files -->
 <script src="config/configs.js"></script>
-<script src="config/prod-2014.js"></script>
+<script src="config/scoring_systems.js"></script>
 </head>
 <body>
 
@@ -43,9 +44,14 @@
 
 <div class="span6">
 
-<div class="config">
+<div class="config setup">
   <h3>Config:</h3>
   <select id="configs"></select>
+</div>
+
+<div class="scoring setup">
+  <h3>Scoring:</h3>
+  <select id="scorings"></select>
 </div>
 
 <h3>Draft</h3>

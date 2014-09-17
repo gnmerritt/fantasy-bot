@@ -1,7 +1,6 @@
 /**
  * Non-bootstrap styling for the bot UI
  */
-
 .potential tr:nth-child(n + 45) { display:none; }
 .potential.showAll tr { display:table-row; }
 .potential tr { -webkit-transition: all 2s ease; }
@@ -12,8 +11,8 @@
 .hasId { background-color:yellow; }
 .best { background-color:red !important; }
 
-.config * { display:inline-block; }
-#configs { margin-left:50px; }
+.setup * { display:inline-block; }
+.setup select { margin-left:50px; }
 
 #roster { overflow:hidden; margin-left:-40px; }
 #roster li { float:left; padding:5px; list-style-type:none; }

@@ -114,3 +114,19 @@ window.makeCall = function(config) {
 window.now_utc = function() {
     return Math.floor((new Date()).getTime() / 1000);
 };
+
+/**
+ * Copies & cleans up the input data
+ */
+window.cleanInputData = function(jsonInput) {
+    var input = JSON.parse(JSON.stringify(jsonInput)) // :-P
+    ;
+    // convert all numeric fields to floats
+    forEveryPlayer(input, function(player) {
+        var pointsStr = player.points
+        , pointsFloat = parseFloat(pointsStr)
+        ;
+        player.points = pointsFloat;
+    });
+    return input;
+};

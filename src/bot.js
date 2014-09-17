@@ -182,12 +182,15 @@ window.FantasyDrafter = function(config) {
     }
 
     , afterDraftInfo = function() {
-        // Stage 1: calculate vorp for players
-        playerEstimates = vorp(PLAYER_POINTS // input data
+        // Stage 1: Calculate projected fantasy points based on scoring system
+        var inputData = cleanInputData(PLAYER_POINTS);
+
+        // Stage 2: calculate vorp for players
+        playerEstimates = vorp(inputData
                                , roster.fullRoster() // full roster
                                , draftInfo.numTeams); // # teams
 
-        // Stage 2: match players to draft API. The matcher will decorate
+        // Stage 3: match players to draft API. The matcher will decorate
         // the existing playerEstimates object for us as it finds matches
         if (!config.MANUAL) {
             idsToPlayers = new IdMatcher(playerEstimates, config).match();

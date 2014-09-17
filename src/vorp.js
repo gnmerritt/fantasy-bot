@@ -63,17 +63,8 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
         return replacementValues
     }
 
-    , cleanInput = function(input) {
-        var estimates = JSON.parse(JSON.stringify(input)) // :-P
-        ;
-        // convert player points to a float
-        forEveryPlayer(estimates, function(player) {
-            var pointsStr = player.points
-            , pointsFloat = parseFloat(pointsStr)
-            ;
-            player.points = pointsFloat;
-        });
-        // now sort all the lists by point total, descending
+    , sortInput = function(estimates) {
+        // sort all the lists (positions) by point total, descending
         $.each(estimates, function(position, playerList) {
             playerList.sort(function(a,b) { return b.points - a.points; });
         });
@@ -84,7 +75,7 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
     // Now do the real work. Clean the input, calculate replacement values
     // and return a decorated version of the input object with vorp
     //
-    , inputEstimates = cleanInput(pointEstimates)
+    , inputEstimates = sortInput(pointEstimates)
     , replacementValues = calculateReplacementValues(inputEstimates)
     ;
 

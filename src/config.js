@@ -6,7 +6,7 @@ var CONFIG = {};
 config = function(document, window, undefined) {
  'use strict';
 
-var DEFAULT_CONFIG = "defaultConfig"
+var LAST_CONFIG = "defaultConfig"
 
 , fillConfigs = function(selected) {
     var holder = $("#configs")
@@ -25,7 +25,7 @@ var DEFAULT_CONFIG = "defaultConfig"
 , switchConfig = function() {
     $( "select option:selected" ).each(function() {
         var name = $( this ).text();
-        localStorage.setItem(DEFAULT_CONFIG, name);
+        localStorage.setItem(LAST_CONFIG, name);
         log("reloading with new config", name);
         window.location.reload();
     });
@@ -40,11 +40,11 @@ var DEFAULT_CONFIG = "defaultConfig"
 
 return {
     init: function() {
-        var config = localStorage.getItem(DEFAULT_CONFIG) || "DEBUG";
+        var config = localStorage.getItem(LAST_CONFIG) || "DEBUG";
         fillConfigs(config);
         $("#configs").change(switchConfig);
         loadConfig(config);
     }
 };
 
-}(document, window, undefined);
+}(document, window);
