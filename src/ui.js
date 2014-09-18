@@ -10,7 +10,10 @@ dust.loadSource(dust.compile(
 
 dust.loadSource(dust.compile(
     "<table class='potential table table-rounded table-bordered table-hover'><tr class='head'><th>Rank<th>Name<th>Team<th>Position<th>Points<th>VORP<th>ID{#players}"
-  + "{^taken}<tr data-id='{id}' data-pos='{pos}' class='{?id}hasId{/id}{?free} free{/free}'><td>{$idx}<td class='n'>{first_name} {last_name}<td>{team}<td>{pos} ({pos_rank})<td>{points}<td>{vorp}<td>{id}</tr>{/taken}{/players}</table>",
+  + "{^taken}<tr data-id='{id}' data-pos='{pos}' class='{?id}hasId{/id}{?free} free{/free}'><td>{$idx}"
+  + "<td class='n'>{first_name} {last_name}<td>{team}<td>{pos} ({pos_rank})"
+  + '<td>{@math key=points method="round" /}<td>{@math key=vorp method="round" /}<td>{id}</tr>'
+  + "{/taken}{/players}</table>",
                             "potentials"));
 
 dust.loadSource(dust.compile("<table class='table table-rounded table-bordered table-striped'><tr><th>Name<th>Position<th>ID{#players}<tr data-pos='{fantasy_position}'><td>{first_name} {last_name}<td>{fantasy_position}<td>{id}</tr>{/players}</table>",
