@@ -1,3 +1,5 @@
+(function(document, window, undefined) {
+
 var SCORING_BASE = {
     // Defense/Special Teams
     "sacks": 1
@@ -38,3 +40,12 @@ var SCORING_BASE = {
 };
 
 SCORING["YAHOO"] = $.extend({}, SCORING_BASE);
+
+SCORING["CLOWN"] = $.extend({}, SCORING_BASE, {
+    "pass_yds": 0.0333
+    , "pass_ints": -2
+    , "rush_yds": 0.0666
+    , "rec_yds": 0.0666
+});
+
+})(document, window);

@@ -9,7 +9,7 @@ var SCORING = {};
 
 window.scoring = function(playerInput, config) {
     var DEFAULT_SYSTEM = "YAHOO"
-    , GAMES_PER_SEASON = 16
+    , GAMES_PER_SEASON = 16 // TODO: this is probably not needed long term...
 
     , scoring_name = config.SCORING || DEFAULT_SYSTEM
     , scoring = SCORING[scoring_name]
