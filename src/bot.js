@@ -183,10 +183,11 @@ window.FantasyDrafter = function(config) {
 
     , afterDraftInfo = function() {
         // Stage 1: Calculate projected fantasy points based on scoring system
-        var inputData = cleanInputData(PLAYER_POINTS);
-
+        var inputData = cleanInputData(PLAYER_POINTS)
+        , scoredPlayers = scoring(inputData, config)
+        ;
         // Stage 2: calculate vorp for players
-        playerEstimates = vorp(inputData
+        playerEstimates = vorp(scoredPlayers
                                , roster.fullRoster() // full roster
                                , draftInfo.numTeams); // # teams
 

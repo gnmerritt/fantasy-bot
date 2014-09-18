@@ -116,17 +116,22 @@ window.now_utc = function() {
 };
 
 /**
- * Copies & cleans up the input data
+ * Copies & cleans up the input data - converts all numeric fields to floats
  */
 window.cleanInputData = function(jsonInput) {
     var input = JSON.parse(JSON.stringify(jsonInput)) // :-P
+    , strsToFloats = function(player) {
+        $.each(player, function(key, value) {
+            try {
+                var asFloat = parseFloat(value);
+                if (!isNaN(asFloat)) {
+                    player.key = asFloat;
+                }
+            }
+            catch (e) {}
+        });
+    }
     ;
-    // convert all numeric fields to floats
-    forEveryPlayer(input, function(player) {
-        var pointsStr = player.points
-        , pointsFloat = parseFloat(pointsStr)
-        ;
-        player.points = pointsFloat;
-    });
+    forEveryPlayer(input, strsToFloats);
     return input;
 };

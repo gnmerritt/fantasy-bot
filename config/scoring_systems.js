@@ -32,7 +32,9 @@ var SCORING_BASE = {
     , "pass_yds": 0.04
     , "pass_tds": 4
 
-    // TODO: FGs
+    // Kickers
+    , "fgs": 3
+    , "xpt": 1
 };
 
 SCORING["YAHOO"] = $.extend({}, SCORING_BASE);
