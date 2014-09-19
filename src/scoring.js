@@ -9,25 +9,20 @@ var SCORING = {};
 
 window.scoring = function(playerInput, config) {
     var DEFAULT_SYSTEM = "YAHOO"
-    , GAMES_PER_SEASON = 16 // TODO: this is probably not needed long term...
 
     , scoring_name = config.SCORING || DEFAULT_SYSTEM
     , scoring = SCORING[scoring_name]
 
     , calculatePoints = function(player) {
-        var totalPerGame = 0;
-        $.each(player, function(stat, countPerGame) {
+        var total = 0;
+        $.each(player, function(stat, count) {
             if (scoring[stat] != null && $.isNumeric(scoring[stat])) {
-                totalPerGame += countPerGame * scoring[stat];
+                total += count * scoring[stat];
             }
         });
-        player.points = (totalPerGame * GAMES_PER_SEASON);
+        player.points = total;
     }
     ;
-    if (!scoring) {
-        log("Could not find scoring: " + scoring_name);
-        return {};
-    }
     log("Calculating fantasy points using " + scoring_name);
     forEveryPlayer(playerInput, calculatePoints);
     return playerInput;

@@ -4,13 +4,29 @@ import jsonpickle
 
 
 class DefenseData(object):
+    EXCLUDED = ["", "player", "pts", "rank", "yds allowed", "position"]
+    KEYS = {
+        "scks": "sacks"
+        , "safts": "safety"
+        , "fum": "fumble_rec"
+        , "deftd": "def_td"
+    }
+
     def __init__(self, csv_row):
         self.pos = "DST"
         name = csv_row.pop("Player").split(", ")
         self.last_name = name[0]
         self.first_name = name[1]
-        self.team = csv_row.pop("Team")
-        self.points = csv_row.pop("Pts")
+
+        for k, v in csv_row.iteritems():
+            key = self.get_key(k.lower())
+            if not key in self.EXCLUDED:
+                setattr(self, key, v)
+
+    def get_key(self, key):
+        if key in self.KEYS:
+            return self.KEYS[key]
+        return key
 
 
 class FantasySharksScraper(object):

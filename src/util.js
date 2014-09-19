@@ -121,15 +121,17 @@ window.now_utc = function() {
 window.cleanInputData = function(jsonInput) {
     var input = JSON.parse(JSON.stringify(jsonInput)) // :-P
     , strsToFloats = function(player) {
+        var vals = {};
         $.each(player, function(key, value) {
             try {
                 var asFloat = parseFloat(value);
-                if (!isNaN(asFloat)) {
-                    player.key = asFloat;
+                if ($.isNumeric(asFloat)) {
+                    vals[key] = asFloat;
                 }
             }
             catch (e) {}
         });
+        $.extend(player, vals);
     }
     ;
     forEveryPlayer(input, strsToFloats);

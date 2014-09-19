@@ -41,11 +41,15 @@ var SCORING_BASE = {
 
 SCORING["YAHOO"] = $.extend({}, SCORING_BASE);
 
+var one_thirtieth = 1/30
+ , one_fifteenth = 1/15
+ ;
+
 SCORING["CLOWN"] = $.extend({}, SCORING_BASE, {
-    "pass_yds": 0.0333
+    "pass_yds": one_thirtieth
     , "pass_ints": -2
-    , "rush_yds": 0.0666
-    , "rec_yds": 0.0666
+    , "rush_yds": one_fifteenth
+    , "rec_yds": one_fifteenth
 });
 
 })(document, window);

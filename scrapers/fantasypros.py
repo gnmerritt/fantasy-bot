@@ -29,7 +29,7 @@ class PlayerData(object):
 
 
 class FantasyProsScraper(object):
-    BASE_URL = "http://www.fantasypros.com/nfl/projections/{pos}.php?export=xls"
+    BASE_URL = "http://www.fantasypros.com/nfl/projections/{pos}.php?export=xls&week=draft"
     POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K']
 
     def get_data(self, position):
@@ -50,7 +50,7 @@ class FantasyProsScraper(object):
         vals = {}
         for k in row.keys():
             v = row.pop(k)
-            vals[k.strip().lower()] = v
+            vals[k.strip().lower()] = v.strip().replace(",", "")
         return vals
 
     def scrape_position(self, data_table, position):
