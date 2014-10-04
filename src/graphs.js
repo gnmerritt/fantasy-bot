@@ -12,7 +12,9 @@ window.Graphs = function(inputData) {
         // TODO: derivative(points) ?
     }
 
-    , playerEstimates = inputData
+    , playerEstimates = inputData // reference to main bot data
+
+    , nextRedraw = null // next scheduled redraw
     ;
 
     // Flot hack - Makes the max value on an axis a label instead of the number
@@ -55,8 +57,17 @@ window.Graphs = function(inputData) {
         drawGraph(activeType);
     };
 
+    function queueRedraw() {
+        if (!nextRedraw) {
+            nextRedraw = setTimeout(function() {
+                redrawActive();
+                nextRedraw = null;
+            }, 2000);
+        }
+    }
+
     function attachListeners() {
-        $(window).on(window.ff.UPDATE, redrawActive);
+        $(window).on(window.ff.UPDATE, queueRedraw);
         $(".graph button").on("click", function() {
             drawGraph($(this).data("type"));
         });
