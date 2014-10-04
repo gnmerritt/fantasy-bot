@@ -14,6 +14,8 @@
 .setup * { display:inline-block; }
 .setup select { margin-left:50px; }
 
+#pos_graph { width:100%; height:400px; }
+
 #roster { overflow:hidden; margin-left:-40px; }
 #roster li { float:left; padding:5px; list-style-type:none; }
 
