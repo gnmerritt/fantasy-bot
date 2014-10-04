@@ -32,3 +32,12 @@ dust.loadSource(dust.compile(
   + '<button type="button" class="dismiss btn btn-lg btn-default">Close</button>'
   + "</div>"
     , "manualPopup"));
+
+
+$(document).ready(function() {
+    // Keeps buttons in button groups active
+    $('body').on('click', '.btn-group button', function(e) {
+        $(this).addClass('active');
+        $(this).siblings().removeClass('active');
+    });
+});

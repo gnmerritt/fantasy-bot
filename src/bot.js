@@ -200,10 +200,8 @@ window.FantasyDrafter = function(config) {
         $(window).on(DATA_CHANGE, drawPotentials);
         $(window).on(HIGHLIGHT_BEST, highlightBest);
 
-        // TODO
-        setInterval(function() {
-            graphs.update(playerEstimates);
-        }, 1000);
+        // Wire up the graphs
+        new Graphs(playerEstimates);
 
         // Finally, set up any polling or click listening functions
         if (!config.MANUAL) {

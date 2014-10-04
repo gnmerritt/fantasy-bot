@@ -48,10 +48,16 @@
 
 <div class="config setup">
   <h3>Config:</h3>
-  <select id="configs"></select>
+  <select id="configs" class="grouping"></select>
 </div>
 
-<h3>Projected points</h3>
+<div class="setup">
+  <h3>Player projections</h3>
+  <div class="btn-group grouping graph">
+    <button type="button" class="btn btn-default active" data-type="points">Points</button>
+    <button type="button" class="btn btn-default" data-type="vorp">VORP</button>
+  </div>
+</div>
 <div id="pos_graph"></div>
 
 <h3>Draft</h3>

@@ -12,7 +12,7 @@
 .best { background-color:red !important; }
 
 .setup * { display:inline-block; }
-.setup select { margin-left:50px; }
+.setup .grouping { margin-left:50px; }
 
 #pos_graph { width:100%; height:400px; }
 
