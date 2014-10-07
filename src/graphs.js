@@ -7,9 +7,8 @@
  */
 window.Graphs = function(inputData) {
     var FUNCS = {
-        "points": function(p) { return p.points; }
-        , "vorp": function(p) { return p.vorp; }
-        // TODO: derivative(points) ?
+        "points": function(i, p) { return p.points; }
+        , "vorp": function(i, p) { return p.vorp; }
     }
 
     , playerEstimates = inputData // reference to main bot data
@@ -24,6 +23,15 @@ window.Graphs = function(inputData) {
         };
     };
 
+    function getDerivative(i, player, dataFunc) {
+      var prevIndex = i - 1
+        , prevPlayer = playerEstimates[player.pos][prevIndex]
+        ;
+        if (prevPlayer) {
+            return dataFunc(i, prevPlayer) - dataFunc(i, player);
+        }
+    };
+
     /**
      * Given a list of player objects, return a tuple for use by flot
      */
@@ -31,8 +39,14 @@ window.Graphs = function(inputData) {
         var players = []
         , dataFunc = FUNCS[type]
         ;
+        if ($("input.deriv").prop('checked')) {
+            var originalFunc = dataFunc;
+            dataFunc = function(i, p) {
+                return getDerivative(i, p, originalFunc);
+            };
+        }
         $.each(positionEstimates, function(i, p) {
-            players.push([i + 1, dataFunc(p)]);
+            players.push([i + 1, dataFunc(i, p)]);
         });
         return players;
     };
@@ -68,6 +82,7 @@ window.Graphs = function(inputData) {
 
     function attachListeners() {
         $(window).on(window.ff.UPDATE, queueRedraw);
+        $("input.deriv").on("click", redrawActive);
         $(".graph button").on("click", function() {
             drawGraph($(this).data("type"));
         });
