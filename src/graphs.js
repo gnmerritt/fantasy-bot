@@ -7,8 +7,19 @@
  */
 window.Graphs = function(inputData) {
     var FUNCS = {
-        "points": function(i, p) { return p.points; }
-        , "vorp": function(i, p) { return p.vorp; }
+        "points": function(p) { return p.points; }
+        , "vorp": function(p) { return p.vorp; }
+    }
+
+    , MODS = {
+        "x": function(p, i, base) { return base(p, i); }
+        , "fx": getDerivative
+        , "ffx": function(p, i, base) {
+            var firstDeriv = function(p2, i2) {
+                return getDerivative(p2, i2, base);
+            };
+            return getDerivative(p, i, firstDeriv);
+        }
     }
 
     , playerEstimates = inputData // reference to main bot data
@@ -16,19 +27,12 @@ window.Graphs = function(inputData) {
     , nextRedraw = null // next scheduled redraw
     ;
 
-    // Flot hack - Makes the max value on an axis a label instead of the number
-    function axisHack(name) {
-        return function(val, axis) {
-            return val < axis.max ? val.toFixed(2) : name;
-        };
-    };
-
-    function getDerivative(i, player, dataFunc) {
+    function getDerivative(player, i, dataFunc) {
       var prevIndex = i - 1
         , prevPlayer = playerEstimates[player.pos][prevIndex]
         ;
         if (prevPlayer) {
-            return dataFunc(i, prevPlayer) - dataFunc(i, player);
+            return dataFunc(player, i) - dataFunc(prevPlayer, prevIndex);
         }
     };
 
@@ -38,17 +42,20 @@ window.Graphs = function(inputData) {
     function getPositionData(positionEstimates, type) {
         var players = []
         , dataFunc = FUNCS[type]
+        , mod = $(".deriv .active").data("mod") || "x"
+        , modFunc = MODS[mod]
         ;
-        if ($("input.deriv").prop('checked')) {
-            var originalFunc = dataFunc;
-            dataFunc = function(i, p) {
-                return getDerivative(i, p, originalFunc);
-            };
-        }
         $.each(positionEstimates, function(i, p) {
-            players.push([i + 1, dataFunc(i, p)]);
+            players.push([i + 1, modFunc(p, i, dataFunc)]);
         });
         return players;
+    };
+
+    // Flot hack - Makes the max value on an axis a label instead of the number
+    function axisHack(name) {
+        return function(val, axis) {
+            return val < axis.max ? val.toFixed(2) : name;
+        };
     };
 
     function drawGraph(type) {
@@ -82,9 +89,8 @@ window.Graphs = function(inputData) {
 
     function attachListeners() {
         $(window).on(window.ff.UPDATE, queueRedraw);
-        $("input.deriv").on("click", redrawActive);
-        $(".graph button").on("click", function() {
-            drawGraph($(this).data("type"));
+        $(".deriv button, .graph button").on("click", function() {
+            setTimeout(redrawActive, 1);
         });
     };
 
