@@ -1,3 +1,5 @@
+var SCORING = {};
+
 (function(document, window, undefined) {
 
 var SCORING_BASE = {

@@ -1,5 +1,9 @@
 *csv*
 *.ods
 *pyc
-data/*
-venv/*
+data/
+app/assets/data/
+venv/
+bower_components/
+node_modules/
+deploy/

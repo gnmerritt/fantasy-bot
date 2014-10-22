@@ -1,0 +1,29 @@
+{
+  "name": "fantasy-bot",
+  "version": "2.0.0",
+  "description": "Nathan's Fantasy Football Bot",
+  "main": "app/index.html",
+  "dependencies": {
+    "brunch": "~1.7.18",
+    "clean-css-brunch": "~1.7.1",
+    "css-brunch": "~1.7.0",
+    "javascript-brunch": "~1.7.1",
+    "ngmin-uglify-js-brunch": "~1.7.13"
+  },
+  "devDependencies": {
+    "auto-reload-brunch": "~1.7.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gnmerritt/fantasy-bot.git"
+  },
+  "author": "Nathan Merritt <gnm@the-merritts.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gnmerritt/fantasy-bot/issues"
+  },
+  "homepage": "https://github.com/gnmerritt/fantasy-bot"
+}

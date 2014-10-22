@@ -1,5 +1,3 @@
-var CONFIG = {};
-
 /**
  * Configuration manager, allows for switching between multiple teams
  */

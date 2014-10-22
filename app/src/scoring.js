@@ -1,5 +1,3 @@
-var SCORING = {};
-
 /**
  * Scoring system manager, converts a set of projected stats into a
  * points total depending on the system

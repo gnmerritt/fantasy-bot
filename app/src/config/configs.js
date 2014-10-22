@@ -1,3 +1,5 @@
+var CONFIG = {};
+
 /**
  * Draft configuration profiles
  */

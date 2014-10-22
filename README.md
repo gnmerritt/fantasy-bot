@@ -10,11 +10,20 @@ using the number of starter slots (flex included) for a position plus
 the number of bench slots, all times the number of teams in the
 league.
 
+Install
+-------
+```shell
+npm install -g bower
+npm install
+bower install
+brunch watch
+```
+
 To use
 ------
 
 Scrape yourself some data, add an entry to configs.js and point a
-browser at index.html. Everything runs in your browser.
+browser at deploy/index.html. Everything runs in your browser.
 
 Code locations
 --------------
