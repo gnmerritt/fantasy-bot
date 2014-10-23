@@ -2,16 +2,17 @@
  * Extra styling for the bot UI
  */
 .potential {
-  tr:nth-child(n + 45) { display:none; }
-  .potential.showAll tr { display:table-row; }
-  .potential tr { -webkit-transition: all 2s ease; }
+  tr {
+    -webkit-transition: all 2s ease;
+    &:nth-child(n + 45) { display:none; }
+    .showAll& { display:table-row; }
+  }
 
   .free { background-color:#00FF00; }
+  .active { background-color:yellow; font-weight:bold; }
+  .hasId { background-color:yellow; }
+  .best { background-color:red !important; }
 }
-
-.active { background-color:yellow; font-weight:bold; }
-.hasId { background-color:yellow; }
-.best { background-color:red !important; }
 
 .setup {
   * { display:inline-block; }
