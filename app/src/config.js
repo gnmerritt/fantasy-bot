@@ -38,7 +38,7 @@ var LAST_CONFIG = "defaultConfig"
 
 return {
     init: function() {
-        var config = localStorage.getItem(LAST_CONFIG) || "DEBUG";
+        var config = localStorage.getItem(LAST_CONFIG) || "YAHOO";
         fillConfigs(config);
         $("#configs").change(switchConfig);
         loadConfig(config);

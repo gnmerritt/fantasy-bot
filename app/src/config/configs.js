@@ -33,7 +33,7 @@ CONFIG["FORGET-2014"] = $.extend({}, base, {
     KEY: "70041038-ecb3-459d-b388-2df91a1e8057"
 });
 
-CONFIG["YAHOO-MOCK"] = $.extend({}, manual, {
+CONFIG["YAHOO"] = $.extend({}, manual, {
     ROSTER: "QB, RB, RB, WR, WR, WR, TE, K, DST, BN, BN, BN, BN, BN, BN"
     , ROSTER_SLOTS: 15
     , TEAMS: 10
