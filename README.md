@@ -22,19 +22,21 @@ brunch watch
 To use
 ------
 
-Scrape yourself some data, add an entry to configs.js and point a
+Scrape yourself some data, add an entry to [configs.js](app/src/config/configs.js) and point a
 browser at deploy/index.html. Everything runs in your browser.
 
 Code locations
 --------------
 
-Bot logic lives in src/
+Bot logic lives in [src/](app/src/)
 
-Scrapers to acquire data in the right format live in scrapers/
+Scrapers to acquire data in the right format live in [scrapers/](scrapers/)
 
-Configurations (drafts) are set up in configs/configs.js
+Configurations (drafts) are [specified here](app/src/config/configs.js)
 
-Python dependencies provided in requirements.txt
+Python dependencies provided in requirements.txt, bower & npm in their respective json files
+
+Chrome extension is in [chrome/](chrome/)
 
 Known problems
 --------------
