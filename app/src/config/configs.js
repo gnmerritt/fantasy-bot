@@ -5,9 +5,10 @@ var CONFIG = {};
  */
 (function() {
 
-var base = {
+var defaults = {
     HOST: "draft.gnmerritt.net"
     , PREFIX: "/api/v1/"
+    , SCORING: "YAHOO"
 };
 
 var manual = {
@@ -15,21 +16,15 @@ var manual = {
     , MANUAL: true
 };
 
-CONFIG["DEBUG"] = {
-    KEY: "8891a052-7d14-48db-9c2c-c0a59f87e927"
-    , HOST:"localhost:8000"
-    , PREFIX: "/d/api/v1/"
-};
-
-CONFIG["AUTOBOTS-2013"] = $.extend({}, base, {
+CONFIG["AUTOBOTS-2013"] = $.extend({}, defaults, {
     KEY: "8891a052-7d14-48db-9c2c-c0a59f87e927"
 });
 
-CONFIG["AUTOBOTS-2014"] = $.extend({}, base, {
+CONFIG["AUTOBOTS-2014"] = $.extend({}, defaults, {
     KEY: "36164d39-014c-484f-b9f7-70fa07bcf6e4"
 });
 
-CONFIG["FORGET-2014"] = $.extend({}, base, {
+CONFIG["FORGET-2014"] = $.extend({}, defaults, {
     KEY: "70041038-ecb3-459d-b388-2df91a1e8057"
 });
 
