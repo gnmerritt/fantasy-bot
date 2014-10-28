@@ -34,6 +34,13 @@ CONFIG["YAHOO"] = $.extend({}, manual, {
     , TEAMS: 10
 });
 
+CONFIG["ESPN"] = $.extend({}, manual, {
+    ROSTER: "QB, RB, RB, WR, WR, RB/WR, TE, K, DST, BN, BN, BN, BN, BN, BN, BN"
+    , ROSTER_SLOTS: 16
+    , SCORING: "ESPN"
+    , TEAMS: 10
+});
+
 CONFIG["CLOWN"] = $.extend({}, manual, {
     ROSTER: "QB, RB, RB, WR, WR, TE, WR/RB, K, DST, BN, BN, BN, BN"
     , ROSTER_SLOTS: 13

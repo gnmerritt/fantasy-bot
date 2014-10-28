@@ -43,6 +43,13 @@ var SCORING_BASE = {
 
 SCORING["YAHOO"] = $.extend({}, SCORING_BASE);
 
+SCORING["ESPN"] = $.extend({
+    "pass_ints": -2
+    // TODO: defensive allowed yards
+    // TODO: defensive points allowed
+    // TODO: field goal misses
+}, SCORING_BASE);
+
 var one_thirtieth = 1/30
  , one_fifteenth = 1/15
  ;
