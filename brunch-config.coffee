@@ -15,6 +15,9 @@ exports.config =
         before: [
           'app/src/config/configs.js'
         ]
+        after: [
+          'app/src/data/dst_latest.js'
+        ]
     stylesheets:
       joinTo:
         'css/vendor.css': /^(bower_components|vendor)/
