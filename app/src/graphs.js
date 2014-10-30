@@ -60,6 +60,7 @@ window.Graphs = function(inputData) {
 
     function drawGraph(type) {
         var graphData = []
+        , plot
         ;
         $.each(playerEstimates, function(i, positionList) {
             var rawData = getPositionData(positionList, type);
@@ -68,10 +69,27 @@ window.Graphs = function(inputData) {
                 , data:rawData
             });
         });
-        $.plot("#pos_graph", graphData, {
-            yaxis: { tickFormatter: axisHack(type) }
+        plot = $.plot("#pos_graph", graphData, {
+            yaxis: {
+                tickFormatter: axisHack(type)
+                , zoomRange: [null, 500]
+            }
+            , xaxis: {
+                zoomRange: [5, 225]
+                , panRange: [0, 225]
+            }
             , grid: { hoverable: true }
+            , zoom: { interactive: true }
+            , pan: { interactive: true }
         });
+
+        $("<button id='zoomOut' class='btn'>Zoom out</button>")
+            .appendTo($("#pos_graph"))
+            .click(function (event) {
+                event.preventDefault();
+                plot.zoomOut();
+            });
+
         _attachListeners();
     };
 

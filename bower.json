@@ -29,6 +29,12 @@
           "dependencies": {
               "dustjs-linkedin": "~2.4.2"
           }
+      },
+      "flot": {
+          "main": [
+              "jquery.flot.js",
+              "jquery.flot.navigate.js"
+          ]
       }
   }
 }
