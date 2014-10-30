@@ -70,6 +70,36 @@ window.Graphs = function(inputData) {
         });
         $.plot("#pos_graph", graphData, {
             yaxis: { tickFormatter: axisHack(type) }
+            , grid: { hoverable: true }
+        });
+        _attachListeners();
+    };
+
+    function _attachListeners() {
+        $("#pos_graph").bind("plothover", function(event, pos, item) {
+            var tooltip = $("#graphPopup")
+            , offset = 30
+            ;
+            if (item) {
+                var playerIndex = item.dataIndex
+                , position = item.series.label
+                , player = playerEstimates[position][playerIndex]
+                , data = $.extend({}, player, {
+                    value: item.datapoint[1].toFixed(2)
+                })
+                , css = {
+                    top: item.pageY - offset
+                    , left: item.pageX + offset
+                    , borderColor: item.series.color
+                }
+                ;
+                render("playerPopup", data, "#graphPopup", function() {
+                    tooltip.css(css).fadeIn(200);
+                });
+            }
+            else {
+                tooltip.hide();
+            }
         });
     };
 

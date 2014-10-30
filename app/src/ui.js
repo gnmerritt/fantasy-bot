@@ -33,6 +33,10 @@ dust.loadSource(dust.compile(
   + "</div>"
     , "manualPopup"));
 
+dust.loadSource(dust.compile(
+    "<div>{first_name} {last_name}</div>"
+  + "<div>#{pos_rank} {pos} ({value})</div>"
+    , "playerPopup"));
 
 $(document).ready(function() {
     // Keeps buttons in button groups active
