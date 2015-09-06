@@ -28,10 +28,23 @@ CONFIG["FORGET-2014"] = $.extend({}, defaults, {
     KEY: "70041038-ecb3-459d-b388-2df91a1e8057"
 });
 
+CONFIG["AUTOBOTS-2015"] = $.extend({}, defaults, {
+    KEY: "6edb848c-1cdb-4e57-a359-6f9dcb8d1224"
+});
+
+CONFIG["FORGET-2015"] = $.extend({}, defaults, {
+    KEY: "6e1ec310-dfeb-4de4-8009-0115e691def7"
+});
+
 CONFIG["YAHOO"] = $.extend({}, manual, {
     ROSTER: "QB, RB, RB, WR, WR, WR, TE, K, DST, BN, BN, BN, BN, BN, BN"
     , ROSTER_SLOTS: 15
     , TEAMS: 10
+});
+
+CONFIG["MARKET"] = $.extend({}, CONFIG["YAHOO"], {
+	ROSTER: "QB, RB, RB, WR, WR, RB/WR, TE, K, DST, BN, BN, BN, BN, BN, BN"
+	, TEAMS: 14
 });
 
 CONFIG["ESPN"] = $.extend({}, manual, {

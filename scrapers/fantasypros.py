@@ -32,7 +32,7 @@ class PlayerData(object):
 
 class FantasyProsScraper(object):
     BASE_URL = "http://www.fantasypros.com/nfl/rankings/" \
-        + "{pos}-cheatsheet.php?export=xls&week=draft"
+        + "{pos}-cheatsheets.php?export=xls&week=draft"
     POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K']
 
     def get_data(self, position):
@@ -41,18 +41,22 @@ class FantasyProsScraper(object):
         r = requests.get(url)
         if r and r.text:
             return r.text.split("\n")
+        print "Didn't get any data for {}".format(position)
         return []
 
     def remove_header(self, data_table):
         for i, row in enumerate(data_table):
             if row.find(u'Player Name') == 0:
+                print "found header row: {}".format(row)
                 return data_table[i:]
+        print "didnt find header row"
         return data_table
 
     def strip_keys(self, row):
         vals = {}
         for k in row.keys():
             v = row.pop(k)
+            print "got row {}".format(v)
             vals[k.strip().lower()] = v.strip().replace(",", "")
         return vals
 
