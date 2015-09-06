@@ -2,6 +2,7 @@ import csv
 import requests
 import jsonpickle
 
+
 class PlayerData(object):
     EXCLUDED = ["", "fpts", "player name",
                 "rush_att", "pass_att", "pass_att", "pass_cmp",
@@ -18,18 +19,20 @@ class PlayerData(object):
         self.first_name = name[0]
         self.last_name = name[1]
         for k, v in row.iteritems():
-            if not k in self.EXCLUDED:
+            if k not in self.EXCLUDED:
                 setattr(self, k, v)
 
     def __repr__(self):
         return ','.join([self.first_name, self.last_name,
                          self.pos, self.team])
+
     def __str__(self):
         return self.__repr__()
 
 
 class FantasyProsScraper(object):
-    BASE_URL = "http://www.fantasypros.com/nfl/projections/{pos}.php?export=xls&week=draft"
+    BASE_URL = "http://www.fantasypros.com/nfl/rankings/" \
+        + "{pos}-cheatsheet.php?export=xls&week=draft"
     POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K']
 
     def get_data(self, position):
@@ -56,7 +59,8 @@ class FantasyProsScraper(object):
     def scrape_position(self, data_table, position):
         data = self.remove_header(data_table)
         reader = csv.DictReader(data, delimiter='\t', quoting=csv.QUOTE_NONE)
-        players = [PlayerData(self.strip_keys(row), position) for row in reader]
+        players = \
+            [PlayerData(self.strip_keys(row), position) for row in reader]
         return self.clean_data(players)
 
     def clean_data(self, data):
