@@ -9,6 +9,7 @@ window.Graphs = function(inputData) {
     var FUNCS = {
         "points": function(p) { return p.points; }
         , "vorp": function(p) { return p.vorp; }
+        , "vopos": function(p) { return p.vopos; }
     }
 
     , MODS = {
@@ -34,7 +35,7 @@ window.Graphs = function(inputData) {
         if (prevPlayer) {
             return dataFunc(player, i) - dataFunc(prevPlayer, prevIndex);
         }
-    };
+    }
 
     /**
      * Given a list of player objects, return a tuple for use by flot
@@ -49,14 +50,14 @@ window.Graphs = function(inputData) {
             players.push([i + 1, modFunc(p, i, dataFunc)]);
         });
         return players;
-    };
+    }
 
     // Flot hack - Makes the max value on an axis a label instead of the number
     function axisHack(name) {
         return function(val, axis) {
             return val < axis.max ? val.toFixed(2) : name;
         };
-    };
+    }
 
     function drawGraph(type) {
         var graphData = []
@@ -91,7 +92,7 @@ window.Graphs = function(inputData) {
             });
 
         _attachListeners();
-    };
+    }
 
     function _attachListeners() {
         $("#pos_graph").bind("plothover", function(event, pos, item) {
@@ -119,12 +120,12 @@ window.Graphs = function(inputData) {
                 tooltip.hide();
             }
         });
-    };
+    }
 
     function redrawActive() {
         var activeType = $(".graph button.active").data("type");
         drawGraph(activeType);
-    };
+    }
 
     function queueRedraw() {
         if (!nextRedraw) {
@@ -140,7 +141,7 @@ window.Graphs = function(inputData) {
         $(".deriv button, .graph button").on("click", function() {
             setTimeout(redrawActive, 1);
         });
-    };
+    }
 
     attachListeners();
     redrawActive();
