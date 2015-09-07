@@ -13,10 +13,8 @@ exports.config =
         'js/app.js': /^(app\/(src|config))|data|config/
       order:
         before: [
-          'app/src/config/configs.js'
-        ]
-        after: [
-          'app/src/data/dst_latest.js'
+          'app/src/config/configs.js',
+          'data/latest.js'
         ]
     stylesheets:
       joinTo:
