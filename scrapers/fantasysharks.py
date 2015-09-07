@@ -59,8 +59,8 @@ class PlayerData(object):
 
     def load_from_row(self, row):
         name = row.pop("player").split(", ")
-        self.first_name = name[1]
-        self.last_name = name[0]
+        self.first_name = name[1].strip()
+        self.last_name = name[0].strip()
         for k, v in row.iteritems():
             if k in self.EXCLUDED:
                 continue
