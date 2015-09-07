@@ -10,6 +10,7 @@ var SCORING_BASE = {
     , "safety": 2
     , "block_kick": 2
     , "def_td": 6
+    , "ret_yds": 0
 
     // points allowed
     , "0": 10
@@ -70,6 +71,7 @@ SCORING["CLOWN"] = $.extend({}, SCORING_BASE, {
 SCORING["MARKET"] = $.extend({}, SCORING_BASE, {
     "pass_300+": 2,
     "field_100+": 2,
+    "ret_yds": one_fifteenth
 });
 
 })(document, window);

@@ -48,6 +48,7 @@ class PlayerData(object):
         ">= 100yds": "field_100+",  # rush or rec.
         "fgm": "fgs",
         "xpm": "xpt",
+        "kick ret yds": "ret_yds",
     }
 
     def __init__(self, row, position):
