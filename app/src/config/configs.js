@@ -45,6 +45,7 @@ CONFIG["YAHOO"] = $.extend({}, manual, {
 CONFIG["MARKET"] = $.extend({}, CONFIG["YAHOO"], {
 	ROSTER: "QB, RB, RB, WR, WR, RB/WR, TE, K, DST, BN, BN, BN, BN, BN, BN"
 	, TEAMS: 14
+    , SCORING: "MARKET"
 });
 
 CONFIG["ESPN"] = $.extend({}, manual, {
