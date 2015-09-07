@@ -60,7 +60,7 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
         $.each(POSITIONS, function(_, pos) {
             replacementValues[pos] = getReplacementValue(pos, inputEstimates);
         });
-        return replacementValues
+        return replacementValues;
     }
 
     , sortInput = function(estimates) {

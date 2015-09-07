@@ -11,7 +11,7 @@ window.FantasyDrafter = function(config) {
     var GOT_INFO = "gotDraftInfo"
     , DATA_CHANGE = "dataChange"
     , DRAFTED_PLAYER = "drafted"
-    , HIGHLIGHT_BEST = "highlightBest"
+    , AFTER_UPDATE = "onAfterUpdate"
 
     // info about the draft
     , teamId
@@ -29,8 +29,8 @@ window.FantasyDrafter = function(config) {
         ;
         log("trying to draft: " + player.first_name + " " + player.last_name);
         call(pickUrl, function(data) {
-            log("drafted player, got msg back: "+ data.message
-                + " (" + data.code + ")");
+            log("drafted player, got msg back: " + data.message +
+                " (" + data.code + ")");
             // player already picked, try again
             if (data.code === 410) {
                 pickIfActive();
@@ -43,10 +43,12 @@ window.FantasyDrafter = function(config) {
     }
 
     , drawPotentials = function() {
+        vopos(playerEstimates, draftInfo.numTeams);
         render("potentials", {
             'players': playersByVorp(playerEstimates)
         }, "#players");
         highlightBest();
+        $(window).trigger(AFTER_UPDATE);
     }
 
     , updatePlayerAvailability = function(callback) {
@@ -80,7 +82,7 @@ window.FantasyDrafter = function(config) {
             var myTeam = function(ele) {
                 return ele.team.id == teamId;
             };
-            myPicks = data.picks.filter(myTeam)
+            myPicks = data.picks.filter(myTeam);
             render("pickList", {'mine': myPicks}, "#picks");
         });
     }
@@ -94,7 +96,7 @@ window.FantasyDrafter = function(config) {
                     pick(player);
                 }
             });
-        }
+        };
         $.each(myPicks, function(i, pick) {
             var starts = pick.starts.utc
             , ends = pick.expires.utc
@@ -190,6 +192,8 @@ window.FantasyDrafter = function(config) {
         playerEstimates = vorp(scoredPlayers
                                , roster.fullRoster() // full roster
                                , draftInfo.numTeams); // # teams
+        // 2b: calculate vopos (will be updated as draft progresses)
+        vopos(playerEstimates, draftInfo.numTeams);
 
         // Stage 3: match players to draft API. The matcher will decorate
         // the existing playerEstimates object for us as it finds matches
@@ -198,7 +202,6 @@ window.FantasyDrafter = function(config) {
         }
 
         $(window).on(DATA_CHANGE, drawPotentials);
-        $(window).on(HIGHLIGHT_BEST, highlightBest);
 
         // Wire up the graphs
         new Graphs(playerEstimates);
@@ -221,7 +224,7 @@ window.FantasyDrafter = function(config) {
     return {
         DRAFTED: DRAFTED_PLAYER
         , UPDATE: DATA_CHANGE
-        , NEW_REC: HIGHLIGHT_BEST
+        , AFTER_UPDATE: AFTER_UPDATE
 
         , init: function() {
             $(window).on(GOT_INFO, afterDraftInfo);

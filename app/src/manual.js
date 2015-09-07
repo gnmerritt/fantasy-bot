@@ -48,9 +48,9 @@ window.ManualDraft = function(playerEstimates, config) {
         , removePlayer = function() {
             var player = findByName(playerRow.find(".n").html());
             player.free = false;
-            playerRow.remove();
+            player.taken = true; // silly Nathan :-P
             $(window).trigger(CLOSE_POPUP);
-            $(window).trigger(window.ff.NEW_REC);
+            $(window).trigger(window.ff.UPDATE);
         }
         , draftPlayer = function() {
             addRow($("#drafted table"), playerRow);
@@ -87,11 +87,13 @@ window.ManualDraft = function(playerEstimates, config) {
     forEveryPlayer(playerEstimates, function(p) {
         p.free = true;
     });
+    $(window).on(window.ff.AFTER_UPDATE, function() {
+        attachHandlers();
+        tweakPlayers();
+    });
     $(window).trigger(window.ff.UPDATE);
-    setTimeout(tweakPlayers, 500);
 
     setupDrafted();
-    attachHandlers();
 
     window.onbeforeunload = function() {
         return 'Warning: reloading will lose draft progress';

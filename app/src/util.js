@@ -46,10 +46,10 @@
 window.forEveryPlayer = function(input, action) {
     $.each(input, function(pos, playerList) {
         $.each(playerList, function(i, player) {
-            action(player, i);
+            action(player, i, playerList);
         });
     });
-}
+};
 
 /**
  * Given a dict of players by postion, get back a single sorted list
@@ -61,7 +61,7 @@ window.playersByVorp = function(inputPlayers) {
     });
     players.sort(function(a,b) { return b.vorp - a.vorp; });
     return players;
-}
+};
 
 window.averagePoints = function(players) {
     var total = 0;
@@ -69,7 +69,7 @@ window.averagePoints = function(players) {
         total += player.points;
     });
     return total / Math.max(players.length, 1);
-}
+};
 
 /**
  * Thin wrapper around dust.render - should be the only place dust is referenced
@@ -84,7 +84,7 @@ window.render = (function() {
                 callback();
             }
         });
-    }
+    };
 })();
 
 /**
@@ -108,7 +108,7 @@ window.makeCall = function(config) {
             dataType: "jsonp",
             success: callback
         });
-    }
+    };
 };
 
 window.now_utc = function() {

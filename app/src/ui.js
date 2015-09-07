@@ -9,10 +9,13 @@ dust.loadSource(dust.compile(
     "pickList"));
 
 dust.loadSource(dust.compile(
-    "<table class='potential table table-rounded table-bordered table-hover'><tr class='head'><th>Rank<th>Name<th>Team<th>Position<th>Points<th>VORP<th>ID{#players}"
+    "<table class='potential table table-rounded table-bordered table-hover'><tr class='head'><th>Rank<th>Name<th>Team<th>Position<th>Points<th>VORP<th>VOPOS<th>ID{#players}"
   + "{^taken}<tr data-id='{id}' data-pos='{pos}' class='{?id}hasId{/id}{?free} free{/free}'><td>{$idx}"
   + "<td class='n'>{first_name} {last_name}<td>{team}<td>{pos} ({pos_rank})"
-  + '<td>{@math key=points method="round" /}<td>{@math key=vorp method="round" /}<td>{id}</tr>'
+  + '<td>{@math key=points method="round" /}'
+  + '<td>{@math key=vorp method="round" /}'
+  + '<td>{@math key=vopos method="round" /}'
+  + '<td>{id}</tr>'
   + "{/taken}{/players}</table>",
                             "potentials"));
 
