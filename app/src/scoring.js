@@ -14,7 +14,7 @@ window.scoring = function(playerInput, config) {
     , calculatePoints = function(player) {
         var total = 0;
         $.each(player, function(stat, count) {
-            if (scoring[stat] != null && $.isNumeric(scoring[stat])) {
+            if ($.isNumeric(scoring[stat])) {
                 total += count * scoring[stat];
             }
         });
