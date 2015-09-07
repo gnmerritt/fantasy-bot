@@ -18,7 +18,7 @@ window.scoring = function(playerInput, config) {
                 total += count * scoring[stat];
             }
         });
-        player.points = total;
+        player.points = Math.max(total, 0);
     }
     ;
     log("Calculating fantasy points using " + scoring_name);
