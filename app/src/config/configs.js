@@ -55,11 +55,4 @@ CONFIG["ESPN"] = $.extend({}, manual, {
     , TEAMS: 10
 });
 
-CONFIG["CLOWN"] = $.extend({}, manual, {
-    ROSTER: "QB, RB, RB, WR, WR, TE, WR/RB, K, DST, BN, BN, BN, BN"
-    , ROSTER_SLOTS: 13
-    , TEAMS: 12
-    , SCORING: "CLOWN"
-});
-
 })();

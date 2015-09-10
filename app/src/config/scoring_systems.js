@@ -57,16 +57,8 @@ SCORING["ESPN"] = $.extend({}, SCORING_BASE, {
     // TODO: field goal misses
 });
 
-var one_thirtieth = 1/30
- , one_fifteenth = 1/15
+var one_fifteenth = 1/15
  ;
-
-SCORING["CLOWN"] = $.extend({}, SCORING_BASE, {
-    "pass_yds": one_thirtieth
-    , "pass_ints": -2
-    , "rush_yds": one_fifteenth
-    , "rec_yds": one_fifteenth
-});
 
 SCORING["MARKET"] = $.extend({}, SCORING_BASE, {
     "pass_300+": 2,
