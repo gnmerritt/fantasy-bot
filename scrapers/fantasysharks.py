@@ -80,15 +80,15 @@ class FantasySharksScraper(object):
     PARAMS = {
         "csv": 1,
         "Sort": "",
-        "Segment": 522,
-        "scoring": 11,
-        "League": -1,
+        "Segment": 554,
+        "scoring": 1,
+        "League": "",
         "uid": 4,
         "uid2": "",
         "printable": ""
     }
     HEADERS = {
-        'user-agent': 'curl/7.9.8 (i686-pc-linux-gnu) libcurl 7.9.8'
+        'user-agent':  'Mozilla/5.0 (Linux; <Android Version>; <Build Tag etc.>) AppleWebKit/<WebKit Rev> (KHTML, like Gecko) Chrome/<Chrome Rev> Mobile Safari/<WebKit Rev>'
     }
     POSITIONS = {
         "1": "QB",
@@ -99,16 +99,12 @@ class FantasySharksScraper(object):
         "7": "K",
     }
 
-    def get_url(self, position):
-        return self.URL.format(pos=position)
-
     def get_csv(self, pos):
-        url = self.get_url(pos)
-        print "Fetching url: {}".format(url)
         params = self.PARAMS.copy()
         params["Position"] = pos
+        print "Fetching url: {} for position {}".format(self.URL, pos)
 
-        r = requests.get(url, params=params, headers=self.HEADERS)
+        r = requests.get(self.URL, params=params, headers=self.HEADERS)
         if r and r.text:
             return r.text.split("\n")
         raise ValueError("no data for {p}".format(p=self.POSITIONS[pos]))
