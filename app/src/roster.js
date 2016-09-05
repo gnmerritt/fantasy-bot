@@ -11,6 +11,7 @@ window.Roster = function( description, slots ) {
     , roster = []
     , bench = []
     , alreadyDrafted = []
+    , neededEachPosition = {}
 
     , setupRoster = function( description, slots ) {
         var rosterList = description.split(/,\s*/)
@@ -24,10 +25,12 @@ window.Roster = function( description, slots ) {
             else {
                 roster.push(pos);
             }
+            neededEachPosition[pos] = window.getTeamDemand(pos, rosterList);
         });
         if (bench.length + roster.length != slots) {
             log("WARNING: possible problem finding roster");
         }
+        log("Needed at each position: " + JSON.stringify(neededEachPosition));
     }
 
     /**
@@ -41,11 +44,17 @@ window.Roster = function( description, slots ) {
         var ownedPositions = alreadyDrafted.slice(0)
         , neededRoster = roster.slice(0)
         , neededBench = bench.slice(0)
+        , ownedAtPosition = ownedPositions
+            .filter(function(p) { return p == pos; }).length
         ;
-        // Special case: never draft a backup kicker.
-        if (pos === "K" && ownedPositions.indexOf("K") > -1) {
-            //log("No backup kickers");
+        // Don't draft backups for bench slots (K, DST)
+        if (BENCH_SLOTS[pos] && ownedPositions.indexOf(pos) > -1) {
+            //log("No backup K/DST");
             return false;
+        }
+        if (ownedAtPosition >= neededEachPosition[pos] * 2) {
+          //log("Already have enough backups at " + pos);
+          return false;
         }
         $.each(ownedPositions, function(i, pos) {
             var rosterIndex = flexIndexOf(neededRoster, pos)

@@ -11,6 +11,22 @@
 (function(document, window, undefined) {
  'use strict';
 
+/**
+ * Calculates demand for starters @ a position. Assign equal demand for all
+ * positions in a flex slot.
+ */
+ window.getTeamDemand = function(position, draftRoster) {
+    var demand = 0;
+    $.each(draftRoster, function(_, slot) {
+        var flexOptions = slot.split("/").length
+        ;
+        if (slot.indexOf(position) != -1) {
+            demand += (1 / flexOptions);
+        }
+    });
+    return demand;
+};
+
 window.vorp = function(pointEstimates, draftRoster, numTeams) {
     var POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
     , REPLACEMENT_RANGE = 3
@@ -21,7 +37,7 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
      * next three available players at the position
      */
     , getReplacementValue = function(position, inputEstimates) {
-        var teamDemand = getTeamDemand(position)
+        var teamDemand = window.getTeamDemand(position, draftRoster)
         , totalDemand = teamDemand * numTeams
 
         , players = inputEstimates[position] || []
@@ -34,22 +50,6 @@ window.vorp = function(pointEstimates, draftRoster, numTeams) {
         ;
         log(position + " replacement range " + replacementStart + " - " + replacementStop);
         return replacementValue.toFixed(2);
-    }
-
-    /**
-     * Calculates demand for starters @ a position. Assign equal demand for all
-     * positions in a flex slot.
-     */
-    , getTeamDemand = function(position) {
-        var demand = 0;
-        $.each(draftRoster, function(_, slot) {
-            var flexOptions = slot.split("/").length
-            ;
-            if (slot.indexOf(position) != -1) {
-                demand += (1 / flexOptions);
-            }
-        });
-        return demand;
     }
 
     /**
