@@ -34,6 +34,7 @@ var SCORING_BASE = {
     // Receiving
     , "rec_yds": 0.1
     , "rec_tds": 6
+    , "rec": 0
 
     // Passing
     , "pass_yds": 0.04
@@ -50,6 +51,10 @@ var SCORING_BASE = {
 
 SCORING["YAHOO"] = $.extend({}, SCORING_BASE);
 
+SCORING["PPR"] = $.extend({}, SCORING_BASE, {
+    "rec": 1
+});
+
 SCORING["ESPN"] = $.extend({}, SCORING_BASE, {
     "pass_ints": -2
     // TODO: defensive allowed yards
@@ -57,13 +62,13 @@ SCORING["ESPN"] = $.extend({}, SCORING_BASE, {
     // TODO: field goal misses
 });
 
-var one_fifteenth = 1/15
- ;
-
 SCORING["MARKET"] = $.extend({}, SCORING_BASE, {
     "pass_300+": 2,
-    "field_100+": 2,
-    "ret_yds": one_fifteenth
+    "field_100+": 2
+});
+
+SCORING["DUFF"] = $.extend({}, SCORING_BASE, {
+    "rec": 0.2
 });
 
 })(document, window);
