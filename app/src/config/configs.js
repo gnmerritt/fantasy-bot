@@ -36,15 +36,23 @@ CONFIG["FORGET-2015"] = $.extend({}, defaults, {
     KEY: "6e1ec310-dfeb-4de4-8009-0115e691def7"
 });
 
+CONFIG["AUTOBOTS-2016"] = $.extend({}, defaults, {
+    KEY: "b8c78a09-6b88-4feb-be73-7f5992eb45d5"
+});
+
 CONFIG["YAHOO"] = $.extend({}, manual, {
     ROSTER: "QB, RB, RB, WR, WR, WR, TE, K, DST, BN, BN, BN, BN, BN, BN"
     , ROSTER_SLOTS: 15
     , TEAMS: 10
 });
 
+CONFIG["PPR"] = $.extend({}, CONFIG["YAHOO"], {
+    SCORING: "PPR"
+});
+
 CONFIG["MARKET"] = $.extend({}, CONFIG["YAHOO"], {
-	ROSTER: "QB, RB, RB, WR, WR, RB/WR, TE, K, DST, BN, BN, BN, BN, BN, BN"
-	, TEAMS: 14
+  	ROSTER: "QB, RB, RB, WR, WR, RB/WR, TE, K, DST, BN, BN, BN, BN, BN, BN"
+    , TEAMS: 12
     , SCORING: "MARKET"
 });
 
@@ -53,6 +61,13 @@ CONFIG["ESPN"] = $.extend({}, manual, {
     , ROSTER_SLOTS: 16
     , SCORING: "ESPN"
     , TEAMS: 10
+});
+
+CONFIG["DUFF"] = $.extend({}, manual, {
+  ROSTER: "QB, RB, RB, WR, WR, WR, TE, RB/WR/TE, K, DST, BN, BN, BN, BN, BN, BN, BN, BN, BN"
+  , ROSTER_SLOTS: 19
+  , TEAMS: 12
+  , SCORING: "DUFF"
 });
 
 })();
