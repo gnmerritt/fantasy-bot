@@ -7,6 +7,7 @@ var CONFIG = {};
 
 var defaults = {
     HOST: "draft.gnmerritt.net"
+    , SCHEME: "https://"
     , PREFIX: "/api/v1/"
     , SCORING: "YAHOO"
 };
@@ -38,6 +39,10 @@ CONFIG["FORGET-2015"] = $.extend({}, defaults, {
 
 CONFIG["AUTOBOTS-2016"] = $.extend({}, defaults, {
     KEY: "b8c78a09-6b88-4feb-be73-7f5992eb45d5"
+});
+
+CONFIG["MOCK"] = $.extend({}, defaults, {
+    KEY: "6401482b-e9fa-406c-add0-b1dd1d8e4702"
 });
 
 CONFIG["YAHOO"] = $.extend({}, manual, {

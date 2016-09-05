@@ -91,7 +91,8 @@ window.render = (function() {
  * Function generator that returns an config specific call function
  */
 window.makeCall = function(config) {
-    var urlPrefix = ["http://", config.HOST, config.PREFIX].join("")
+    var scheme = config.SCHEME || "http://"
+    , urlPrefix = [scheme, config.HOST, config.PREFIX].join("")
     , withKey = function( url ) {
         return url + "?key=" + config.KEY;
     }
