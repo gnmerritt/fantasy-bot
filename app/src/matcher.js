@@ -56,6 +56,9 @@ window.IdMatcher = function(playerEstimates, config) {
             }
         }
         ;
+        if (player.id) {
+            return function() {};
+        }
         return function() {
             searchesPastMinute++;
             call(searchUrl, onResults);
