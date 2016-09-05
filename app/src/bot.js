@@ -22,6 +22,8 @@ window.FantasyDrafter = function(config) {
     , playerEstimates = {}
     , idsToPlayers = {} // map of player id -> player object
 
+    , currentlyPicking = false
+
     , call = makeCall(config) // API interacting function
 
     , pick = function( player ) {
@@ -89,12 +91,17 @@ window.FantasyDrafter = function(config) {
 
     , pickIfActive = function() {
         var pickFunc = function() {
+            if (currentlyPicking) {
+              return;
+            }
+            currentlyPicking = true;
             log("Active! Picking...");
             updatePlayerAvailability(function() {
                 var player = getTopPlayer();
                 if (player) {
                     pick(player);
                 }
+                currentlyPicking = false;
             });
         };
         $.each(myPicks, function(i, pick) {
