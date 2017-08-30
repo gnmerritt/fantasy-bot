@@ -80,7 +80,7 @@ class FantasySharksScraper(object):
     PARAMS = {
         "csv": 1,
         "Sort": "",
-        "Segment": 554,
+        "Segment": 586,
         "scoring": 1,
         "League": "",
         "uid": 4,
